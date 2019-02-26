@@ -17,7 +17,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | environments.
 |
 */
-$config['base_url'] = 'http://10.1.1.55/p/';
+$config['base_url'] = 'http://localhost/canteen_management/';
 
 /*
 |--------------------------------------------------------------------------
