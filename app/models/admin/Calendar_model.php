@@ -9,7 +9,7 @@ class Calendar_model extends CI_Model
 
     public function getEvents($start, $end) {
 
-        $this->db->select('id, title, start, end, description, color');
+        $this->db->select('id, title, start, end, description, color,product_name,product_id');
         $this->db->where('start >=', $start)->where('start <=', $end);
         if ($this->Settings->restrict_calendar) {
             $this->db->where('user_id', $this->session->userdata('user_id'));
@@ -53,6 +53,27 @@ class Calendar_model extends CI_Model
     public function deleteEvent($id) {
         if ($this->db->delete('calendar', array('id' => $id))) {
             return true;
+        }
+        return FALSE;
+    }
+
+    public function getAllProducts()
+    {
+        $q = $this->db->get('products');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
+
+    public function getProductByID($id)
+    {
+        $q = $this->db->get_where('products', array('id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
         }
         return FALSE;
     }

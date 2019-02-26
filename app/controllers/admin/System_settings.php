@@ -801,6 +801,10 @@ class system_settings extends MY_Controller
                 'returns-email' => $this->input->post('returns-email'),
                 'returns-pdf' => $this->input->post('returns-pdf'),
                 'reports-tax' => $this->input->post('reports-tax'),
+                'calendar-index' => $this->input->post('calendar-index'),
+                'calendar-add_menu' => $this->input->post('calendar-add_menu'),
+                'calendar-edit_menu' => $this->input->post('calendar-edit_menu'),
+                'calendar-delete_menu' => $this->input->post('calendar-delete_menu'),
             );
 
             if (POS) {

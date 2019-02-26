@@ -1,5 +1,5 @@
 var fcDelay = 200, fcClicks = 0, fcTimer = null;
-$(document).ready(function(){
+$(document).ready(function () {
     var startDate, endDate;
     var currentEvent;
     $('#color').colorpicker();
@@ -14,7 +14,7 @@ $(document).ready(function(){
         ignoreTimezone: false,
         selectable: true,
         selectHelper: true,
-        select: function(start, end) {
+        select: function (start, end) {
             startDate = start.format();
             endDate = end.format();
             modal({
@@ -25,7 +25,7 @@ $(document).ready(function(){
                         label: cal_lang.add_event
                     }
                 },
-                title: cal_lang.add_event+' (' + start.format(moment_df) + ' - ' + end.format(moment_df) + ')'
+                title: cal_lang.add_event + ' (' + start.format(moment_df) + ' - ' + end.format(moment_df) + ')'
             });
         },
         header: {
@@ -34,7 +34,7 @@ $(document).ready(function(){
             right: 'month,agendaWeek,agendaDay'
         },
         // Get all events stored in database
-        events: site.base_url+'calendar/get_events',
+        events: site.base_url + 'calendar/get_events',
         // Handle Day Click
         // dayClick: function(date, event, view) {
         //     startDate = date.format();
@@ -50,29 +50,29 @@ $(document).ready(function(){
         //     });
         // },
         // Event Mouseover
-        eventMouseover: function(calEvent, jsEvent, view){
-            if (calEvent.description) {
-            var tooltip = '<div class="event-tooltip">' + calEvent.description + '</div>';
-            $("body").append(tooltip);
-            $(this).mouseover(function(e) {
-                $(this).css('z-index', 10000);
-                $('.event-tooltip').fadeIn('500');
-                $('.event-tooltip').fadeTo('10', 1.9);
-            }).mousemove(function(e) {
+        eventMouseover: function (calEvent, jsEvent, view) {
+            if (calEvent.product_name) {
+                var tooltip = '<div class="event-tooltip">' + calEvent.product_name + '</div>';
+                $("body").append(tooltip);
+                $(this).mouseover(function (e) {
+                    $(this).css('z-index', 10000);
+                    $('.event-tooltip').fadeIn('500');
+                    $('.event-tooltip').fadeTo('10', 1.9);
+                }).mousemove(function (e) {
                     $('.event-tooltip').css('top', e.pageY + 10);
                     $('.event-tooltip').css('left', e.pageX + 20);
                 });
-        }
+            }
         },
-        eventMouseout: function(calEvent, jsEvent) {
+        eventMouseout: function (calEvent, jsEvent) {
             $(this).css('z-index', 8);
             $('.event-tooltip').remove();
         },
         // Handle Existing Event Click
-        eventClick: function(calEvent, jsEvent, view) {
+        eventClick: function (calEvent, jsEvent, view) {
             currentEvent = calEvent;
 
-            if( ! currentEvent.url) {
+            if (!currentEvent.url) {
                 modal({
                     buttons: {
                         delete: {
@@ -86,7 +86,7 @@ $(document).ready(function(){
                             label: cal_lang.edit_event
                         }
                     },
-                    title: cal_lang.edit_event+' "' + calEvent.title + '"',
+                    title: cal_lang.edit_event + ' "' + calEvent.title + '"',
                     event: calEvent
                 });
             }
@@ -98,39 +98,47 @@ $(document).ready(function(){
         $('.modal-title').html(data.title);
         $('.modal-footer button:not(".btn-default")').remove();
         $('#title').val(data.event ? data.event.title : '');
-        if(data.event) {
+        if (data.event) {
             var start = data.event.start.format(moment_df);
             var end = data.event.end ? data.event.end.format(moment_df) : '';
         } else {
             var start = moment(startDate).format(moment_df);
             var end = endDate ? moment(endDate).format(moment_df) : '';
         }
-        
-        if (data.event) { $('#eid').val(data.event.id); }
+
+        if (data.event) {
+            $('#eid').val(data.event.id);
+        }
         $('#start').val(start);
         $('#end').val(end);
         $('#description').val(data.event ? data.event.description : '');
         $('#color').val(data.event ? data.event.color : '#3a87ad');
+        var p_id = (data.event ? data.event.product_id : '');
+        // $('.product_id option[value="1"]');
+        // $('#product_id option[value="1"]').attr("selected", "selected");
 
-        $.each(data.buttons, function(index, button){
-            $('.modal-footer').prepend('<button type="button" id="' + button.id  + '" class="btn ' + button.css + '">' + button.label + '</button>')
+        $.each(data.buttons, function (index, button) {
+            console.log(button);
+            $('.modal-footer').prepend('<button type="button" id="' + button.id + '" class="btn ' + button.css + '">' + button.label + '</button>')
         })
 
         $('.cal_modal').modal('show');
-        
+
     }
+
     // Handle Click on Add Button
-    $('.cal_modal').on('click', '#add-event',  function(e){
-        if(validator(['title', 'start'])) {
+    $('.cal_modal').on('click', '#add-event', function (e) {
+        if (validator(['title', 'start'])) {
             var edata = {
                 title: $('#title').val(),
                 description: $('#description').val(),
                 color: $('#color').val(),
                 start: $('#start').val(),
+                product_id: $('#product_id').val(),
                 end: $('#end').val(),
             };
             edata[tkname] = tkvalue;
-            $.post(site.base_url+'calendar/add_event', edata, function(result){
+            $.post(site.base_url + 'calendar/add_menu', edata, function (result) {
                 $('.cal_modal').modal('hide');
                 addAlert(result.msg, (result.error == 1 ? 'danger' : 'success'));
                 $('#calendar').fullCalendar("refetchEvents");
@@ -138,18 +146,19 @@ $(document).ready(function(){
         }
     });
     // Handle click on Update Button
-    $('.cal_modal').on('click', '#update-event',  function(e){
-        if(validator(['title', 'start'])) {
+    $('.cal_modal').on('click', '#update-event', function (e) {
+        if (validator(['title', 'start'])) {
             var edata = {
                 id: $('#eid').val(),
                 title: $('#title').val(),
                 description: $('#description').val(),
                 color: $('#color').val(),
                 start: $('#start').val(),
+                product_id: $('#product_id').val(),
                 end: $('#end').val(),
             };
             edata[tkname] = tkvalue;
-            $.post(site.base_url+'calendar/update_event', edata, function(result){
+            $.post(site.base_url + 'calendar/edit_menu', edata, function (result) {
                 $('.cal_modal').modal('hide');
                 addAlert(result.msg, (result.error == 1 ? 'danger' : 'success'));
                 $('#calendar').fullCalendar("refetchEvents");
@@ -157,8 +166,8 @@ $(document).ready(function(){
         }
     });
     // Handle Click on Delete Button
-    $('.cal_modal').on('click', '#delete-event',  function(e){
-        $.get(site.base_url+'calendar/delete_event/' + currentEvent._id, function(result){
+    $('.cal_modal').on('click', '#delete-event', function (e) {
+        $.get(site.base_url + 'calendar/delete_menu/' + currentEvent._id, function (result) {
             $('.cal_modal').modal('hide');
             addAlert(result.msg, (result.error == 1 ? 'danger' : 'success'));
             $('#calendar').fullCalendar("refetchEvents");
@@ -171,8 +180,8 @@ $(document).ready(function(){
         $('#event-color-addon').css('background', $('#color').val()).css('borderColor', $('#color').val());
     });
     $('.cal_modal').on('shown.bs.modal', function () {
-        $(this).keypress(function(e) {
-            if (! $(e.target).hasClass('skip')) {
+        $(this).keypress(function (e) {
+            if (!$(e.target).hasClass('skip')) {
                 if (e.which == '13') {
                     $('.submit').trigger('click');
                 }
@@ -182,13 +191,14 @@ $(document).ready(function(){
     $('.cal_modal').on('hidden.bs.modal', function () {
         $('.error').html('');
     });
+
     // Basic Validation For Inputs
     function validator(elements) {
         var errors = 0;
-        $.each(elements, function(index, element){
-            if($.trim($('#' + element).val()) == '') errors++;
+        $.each(elements, function (index, element) {
+            if ($.trim($('#' + element).val()) == '') errors++;
         });
-        if(errors) {
+        if (errors) {
             $('.error').html(cal_lang.event_error);
             return false;
         }

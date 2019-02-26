@@ -323,6 +323,22 @@
                                 </tr>
 
                                 <tr>
+                                    <td><?= lang("Menu_Calender"); ?></td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="calendar-index" <?php echo $p->{'calendar-index'} ? "checked" : ''; ?>>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="calendar-add_menu" <?php echo $p->{'calendar-add_menu'} ? "checked" : ''; ?>>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="calendar-edit_menu" <?php echo $p->{'calendar-edit_menu'} ? "checked" : ''; ?>>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="calendar-delete_menu" <?php echo $p->{'calendar-delete_menu'} ? "checked" : ''; ?>>
+                                    </td>
+                                </tr>
+
+                                <tr>
                                     <td><?= lang("reports"); ?></td>
                                     <td colspan="5">
                                         <span style="display:inline-block;">

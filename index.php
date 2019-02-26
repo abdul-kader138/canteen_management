@@ -8,7 +8,7 @@
  * Find your timezone here
  * http://php.net/manual/en/timezones.php
  */
-	$timezone = "America/New_York";
+	$timezone = "America/Miquelon";
 	if(function_exists('date_default_timezone_set')) date_default_timezone_set($timezone);
 	define('TIMEZONE', $timezone);
 
@@ -20,7 +20,7 @@
  * DEMO should always be set to 0 for production
  * To restrict the instllation as demo set DEMO to 1
  */
-	define("DEMO", 0);
+	define('DEMO', 0);
 
 /*
  *---------------------------------------------------------------

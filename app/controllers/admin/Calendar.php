@@ -11,25 +11,40 @@ class Calendar extends MY_Controller
             $this->session->set_userdata('requested_page', $this->uri->uri_string());
             $this->sma->md('login');
         }
-        if ($this->Customer || $this->Supplier) {
-            $this->session->set_flashdata('warning', lang('access_denied'));
-            redirect($_SERVER["HTTP_REFERER"]);
-        }
-
+//        if ($this->Customer || $this->Supplier) {
+//            $this->session->set_flashdata('warning', lang('access_denied'));
+//            redirect($_SERVER["HTTP_REFERER"]);
+//        }
+        $this->permission_details = $this->site->checkPermissions();
         $this->load->library('form_validation');
         $this->load->admin_model('calendar_model');
     }
 
     public function index()
     {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['calendar-index'])) {
+                $res = array('error' => 1, 'msg' => lang('access_denied'));
+                $this->sma->send_json($res);
+            }
+        }
         $this->data['cal_lang'] = $this->get_cal_lang();
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('calendar')));
         $meta = array('page_title' => lang('calendar'), 'bc' => $bc);
+        $this->data['products'] = $this->calendar_model->getAllProducts();
         $this->page_construct('calendar', $meta, $this->data);
     }
 
     public function get_events()
     {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['calendar-index'])) {
+                $res = array('error' => 1, 'msg' => lang('access_denied'));
+                $this->sma->send_json($res);
+            }
+        }
         $cal_lang = $this->get_cal_lang();
         $this->load->library('fc', array('lang' => $cal_lang));
 
@@ -60,21 +75,38 @@ class Calendar extends MY_Controller
         $this->sma->send_json($output_arrays);
     }
 
-    public function add_event()
+
+    public function add_menu()
     {
 
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['calendar-add_menu'])) {
+                $res = array('error' => 1, 'msg' => lang('access_denied'));
+                $this->sma->send_json($res);
+            }
+        }
+
         $this->form_validation->set_rules('title', lang("title"), 'trim|required');
+        $this->form_validation->set_rules('color', lang("color"), 'required');
         $this->form_validation->set_rules('start', lang("start"), 'required');
+        $this->form_validation->set_rules('product_id', lang("product_id"), 'required');
 
         if ($this->form_validation->run() == true) {
+            $product = $this->calendar_model->getProductByID($this->input->post('product_id'));
             $data = array(
                 'title' => $this->input->post('title'),
-                'start' => $this->sma->fld($this->input->post('start')),
-                'end' => $this->input->post('end') ? $this->sma->fld($this->input->post('end')) : NULL,
+                'start' => $this->sma->fsd($this->input->post('start')),
+                'end' => $this->sma->fsd($this->input->post('start')),
                 'description' => $this->input->post('description'),
-                'color' => $this->input->post('color') ? $this->input->post('color') : '#000000',
-                'user_id' => $this->session->userdata('user_id')
-                );
+                'user_id' => $this->session->userdata('user_id'),
+                'created_by' => $this->session->userdata('user_id'),
+                'created_date' => date("Y-m-d H:i:s"),
+                'color' => $this->input->post('color'),
+                'product_id' => $this->input->post('product_id'),
+                'product_name' => $product->name,
+                'product_price' => $product->price
+            );
 
             if ($this->calendar_model->addEvent($data)) {
                 $res = array('error' => 0, 'msg' => lang('event_added'));
@@ -87,28 +119,47 @@ class Calendar extends MY_Controller
 
     }
 
-    public function update_event()
+
+    public function edit_menu()
     {
 
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['calendar-edit_menu'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                $res = array('error' => 1, 'msg' => lang('access_denied'));
+                $this->sma->send_json($res);
+            }
+        }
         $this->form_validation->set_rules('title', lang("title"), 'trim|required');
+        $this->form_validation->set_rules('color', lang("color"), 'required');
         $this->form_validation->set_rules('start', lang("start"), 'required');
 
         if ($this->form_validation->run() == true) {
             $id = $this->input->post('id');
-            if($event = $this->calendar_model->getEventByID($id)) {
-                if(!$this->Owner && $event->user_id != $this->session->userdata('user_id')) {
+            if ($event = $this->calendar_model->getEventByID($id)) {
+                if (!$this->Owner && $event->user_id != $this->session->userdata('user_id')) {
                     $res = array('error' => 1, 'msg' => lang('access_denied'));
                     $this->sma->send_json($res);
                 }
             }
             $data = array(
                 'title' => $this->input->post('title'),
-                'start' => $this->sma->fld($this->input->post('start')),
-                'end' => $this->input->post('end') ? $this->sma->fld($this->input->post('end')) : NULL,
+                'start' => $this->sma->fsd($this->input->post('start')),
+                'end' => $this->sma->fsd($this->input->post('start')),
                 'description' => $this->input->post('description'),
-                'color' => $this->input->post('color') ? $this->input->post('color') : '#000000',
-                'user_id' => $this->session->userdata('user_id')
-                );
+                'user_id' => $this->session->userdata('user_id'),
+                'updated_by' => $this->session->userdata('user_id'),
+                'updated_date' => date("Y-m-d H:i:s"),
+                'color' => $this->input->post('color'),
+            );
+
+            if ($this->input->post('product_id')) {
+                $product = $this->calendar_model->getProductByID($this->input->post('product_id'));
+                $data['product_id'] = $this->input->post('product_id');
+                $data['product_name'] = $product->name;
+                $data['product_price'] = $product->price;
+            }
 
             if ($this->calendar_model->updateEvent($id, $data)) {
                 $res = array('error' => 0, 'msg' => lang('event_updated'));
@@ -121,11 +172,19 @@ class Calendar extends MY_Controller
 
     }
 
-    public function delete_event($id)
+    public function delete_menu($id)
     {
-        if($this->input->is_ajax_request()) {
-            if($event = $this->calendar_model->getEventByID($id)) {
-                if(!$this->Owner && $event->user_id != $this->session->userdata('user_id')) {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['calendar-delete_menu'])) {
+                $res = array('error' => 1, 'msg' => lang('access_denied'));
+                $this->sma->send_json($res);
+            }
+        }
+
+        if ($this->input->is_ajax_request()) {
+            if ($event = $this->calendar_model->getEventByID($id)) {
+                if (!$this->Owner && $event->user_id != $this->session->userdata('user_id')) {
                     $res = array('error' => 1, 'msg' => lang('access_denied'));
                     $this->sma->send_json($res);
                 }
@@ -136,44 +195,45 @@ class Calendar extends MY_Controller
         }
     }
 
-    public function get_cal_lang() {
+    public function get_cal_lang()
+    {
         switch ($this->Settings->user_language) {
             case 'arabic':
-            $cal_lang = 'ar-ma';
-            break;
+                $cal_lang = 'ar-ma';
+                break;
             case 'french':
-            $cal_lang = 'fr';
-            break;
+                $cal_lang = 'fr';
+                break;
             case 'german':
-            $cal_lang = 'de';
-            break;
+                $cal_lang = 'de';
+                break;
             case 'italian':
-            $cal_lang = 'it';
-            break;
+                $cal_lang = 'it';
+                break;
             case 'portuguese-brazilian':
-            $cal_lang = 'pt-br';
-            break;
+                $cal_lang = 'pt-br';
+                break;
             case 'simplified-chinese':
-            $cal_lang = 'zh-tw';
-            break;
+                $cal_lang = 'zh-tw';
+                break;
             case 'spanish':
-            $cal_lang = 'es';
-            break;
+                $cal_lang = 'es';
+                break;
             case 'thai':
-            $cal_lang = 'th';
-            break;
+                $cal_lang = 'th';
+                break;
             case 'traditional-chinese':
-            $cal_lang = 'zh-cn';
-            break;
+                $cal_lang = 'zh-cn';
+                break;
             case 'turkish':
-            $cal_lang = 'tr';
-            break;
+                $cal_lang = 'tr';
+                break;
             case 'vietnamese':
-            $cal_lang = 'vi';
-            break;
+                $cal_lang = 'vi';
+                break;
             default:
-            $cal_lang = 'en';
-            break;
+                $cal_lang = 'en';
+                break;
         }
         return $cal_lang;
     }

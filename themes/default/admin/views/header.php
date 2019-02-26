@@ -135,7 +135,7 @@
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if ($events) { ?>
+                    <?php if ($Owner || $Admin || $GP['calendar-index'] ||$events){ ?>
                         <li class="dropdown hidden-xs">
                             <a class="btn tip" title="<?= lang('calendar') ?>" data-placement="bottom" href="#" data-toggle="dropdown">
                                 <i class="fa fa-calendar"></i>
@@ -1140,6 +1140,14 @@
                                     <?php } ?>
                                 </ul>
                             </li>
+                            <?php } ?>
+
+                            <?php if ($GP['calendar-index']) { ?>
+                                <li class="dropdown-footer">
+                                    <a href="<?= admin_url('calendar') ?>" class="btn-block link">
+                                        <i class="fa fa-calendar"></i> <?= lang('Menu_Calendar') ?>
+                                    </a>
+                                </li>
                             <?php } ?>
 
                             <?php if ($GP['reports-quantity_alerts'] || $GP['reports-expiry_alerts'] || $GP['reports-products'] || $GP['reports-monthly_sales'] || $GP['reports-sales'] || $GP['reports-payments'] || $GP['reports-purchases'] || $GP['reports-customers'] || $GP['reports-suppliers'] || $GP['reports-expenses']) { ?>
