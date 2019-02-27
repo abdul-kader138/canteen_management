@@ -11,10 +11,6 @@ class Calendar extends MY_Controller
             $this->session->set_userdata('requested_page', $this->uri->uri_string());
             $this->sma->md('login');
         }
-//        if ($this->Customer || $this->Supplier) {
-//            $this->session->set_flashdata('warning', lang('access_denied'));
-//            redirect($_SERVER["HTTP_REFERER"]);
-//        }
         $this->permission_details = $this->site->checkPermissions();
         $this->load->library('form_validation');
         $this->load->admin_model('calendar_model');
@@ -30,7 +26,7 @@ class Calendar extends MY_Controller
             }
         }
         $this->data['cal_lang'] = $this->get_cal_lang();
-        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('calendar')));
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('Menu_Calendar')));
         $meta = array('page_title' => lang('calendar'), 'bc' => $bc);
         $this->data['products'] = $this->calendar_model->getAllProducts();
         $this->page_construct('calendar', $meta, $this->data);
@@ -93,6 +89,12 @@ class Calendar extends MY_Controller
         $this->form_validation->set_rules('product_id', lang("product_id"), 'required');
 
         if ($this->form_validation->run() == true) {
+            $menu_count = $this->site->getEventByDate($this->sma->fsd($this->input->post('start')));
+            if (sizeof($menu_count) >= 2) {
+                $res = array('error' => 1, 'msg' => lang('Sufficient menu are available for this date'));
+                $this->sma->send_json($res);
+            }
+
             $product = $this->calendar_model->getProductByID($this->input->post('product_id'));
             $data = array(
                 'title' => $this->input->post('title'),
@@ -105,11 +107,13 @@ class Calendar extends MY_Controller
                 'color' => $this->input->post('color'),
                 'product_id' => $this->input->post('product_id'),
                 'product_name' => $product->name,
-                'product_price' => $product->price
+                'product_price' => $product->price,
+                'discount_amount' => $product->discount_amount,
+                'um' => $product->unit
             );
 
             if ($this->calendar_model->addEvent($data)) {
-                $res = array('error' => 0, 'msg' => lang('event_added'));
+                $res = array('error' => 0, 'msg' => lang('Data_successfully_added'));
                 $this->sma->send_json($res);
             } else {
                 $res = array('error' => 1, 'msg' => lang('action_failed'));
@@ -159,10 +163,12 @@ class Calendar extends MY_Controller
                 $data['product_id'] = $this->input->post('product_id');
                 $data['product_name'] = $product->name;
                 $data['product_price'] = $product->price;
+                $data['discount_amount'] = $product->discount_amount;
+                $data['um'] = $product->unit;
             }
 
             if ($this->calendar_model->updateEvent($id, $data)) {
-                $res = array('error' => 0, 'msg' => lang('event_updated'));
+                $res = array('error' => 0, 'msg' => lang('Data_successfully_updated'));
                 $this->sma->send_json($res);
             } else {
                 $res = array('error' => 1, 'msg' => lang('action_failed'));
@@ -189,7 +195,7 @@ class Calendar extends MY_Controller
                     $this->sma->send_json($res);
                 }
                 $this->db->delete('calendar', array('id' => $id));
-                $res = array('error' => 0, 'msg' => lang('event_deleted'));
+                $res = array('error' => 0, 'msg' => lang('Data_successfully_deleted'));
                 $this->sma->send_json($res);
             }
         }
@@ -237,5 +243,6 @@ class Calendar extends MY_Controller
         }
         return $cal_lang;
     }
+
 
 }

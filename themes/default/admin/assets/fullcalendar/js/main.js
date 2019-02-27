@@ -25,13 +25,15 @@ $(document).ready(function () {
                         label: cal_lang.add_event
                     }
                 },
-                title: cal_lang.add_event + ' (' + start.format(moment_df) + ' - ' + end.format(moment_df) + ')'
+                title: cal_lang.add_event + ' For - ' + start.format(moment_df)
+                // title: cal_lang.add_event + ' (' + start.format(moment_df) + ' - ' + end.format(moment_df) + ')'
             });
         },
         header: {
             left: 'prev, next, today',
             center: 'title',
-            right: 'month,agendaWeek,agendaDay'
+            // right: 'month,agendaWeek,agendaDay'
+            right: 'month'
         },
         // Get all events stored in database
         events: site.base_url + 'calendar/get_events',

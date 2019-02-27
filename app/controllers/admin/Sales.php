@@ -2679,4 +2679,43 @@ class Sales extends MY_Controller
 
     }
 
+    public function food_order($id)
+    {
+        $this->form_validation->set_rules('status', lang("sale_status"), 'required');
+
+        if ($this->form_validation->run() == true) {
+            $info=$this->sales_model->getTodayMenuByID($id);
+            $data = array(
+                'title' => $info->title,
+                'order_date' => $info->start,
+                'description' => $info->description,
+                'menu_calendar_id' => $info->id,
+                'user_id' => $this->session->userdata('user_id'),
+                'created_by' => $this->session->userdata('user_id'),
+                'created_date' => date("Y-m-d H:i:s"),
+                'product_id' => $info->product_id,
+                'product_name' => $info->product_name,
+                'product_price' => $info->product_price,
+                'discount_amount' => $info->discount_amount,
+                'status' => $this->input->post('status'),
+                'note' => $this->sma->clear_tags($this->input->post('note')),
+                'um' => $info->um
+            );
+        } elseif ($this->input->post('update')) {
+            $this->session->set_flashdata('error', validation_errors());
+            admin_redirect(isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : 'welcome');
+        }
+
+        if ($this->form_validation->run() == true && $this->sales_model->addOrder($data)) {
+            $this->session->set_flashdata('message', lang('status_updated'));
+            admin_redirect(isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : 'welcome');
+        } else {
+            $this->data['inv'] = $this->sales_model->getTodayMenuByID($id);
+            $this->data['modal_js'] = $this->site->modal_js();
+            $this->load->view($this->theme.'sales/food_order', $this->data);
+
+        }
+    }
+
+
 }

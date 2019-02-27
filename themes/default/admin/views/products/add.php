@@ -179,6 +179,10 @@ if (!empty($variants)) {
                         <?= lang("product_price", "price") ?>
                         <?= form_input('price', (isset($_POST['price']) ? $_POST['price'] : ($product ? $this->sma->formatDecimal($product->price) : '')), 'class="form-control tip" id="price" required="required"') ?>
                     </div>
+                    <div class="form-group all">
+                        <?= lang("Discount_Amount", "Discount_Amount") ?>
+                        <?= form_input('discount_amount', (isset($_POST['discount_amount']) ? $_POST['discount_amount'] :''), 'class="form-control tip" id="discount_amount" ') ?>
+                    </div>
 
                     <div class="form-group">
                         <input type="checkbox" class="checkbox" value="1" name="promotion" id="promotion" <?= $this->input->post('promotion') ? 'checked="checked"' : ''; ?>>

@@ -167,5 +167,28 @@ class Db_model extends CI_Model
         }
         return FALSE;
     }
-
+    public function getEventByDate($date)
+    {
+        $this->db->where('start =', $date);
+        $q = $this->db->get('calendar');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
+    public function getTodayOrderByDate($date)
+    {
+        $this->db->where('order_date =', $date);
+        $q = $this->db->get('food_order_details');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
 }

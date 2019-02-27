@@ -93,9 +93,6 @@
                 </ul>
                 <ul class="nav navbar-nav pull-right">
                     <li class="dropdown hidden-xs"><a class="btn tip" title="<?= lang('dashboard') ?>" data-placement="bottom" href="<?= admin_url('welcome') ?>"><i class="fa fa-dashboard"></i></a></li>
-                    <?php if (SHOP) { ?>
-                    <li class="dropdown hidden-xs"><a class="btn tip" title="<?= lang('shop') ?>" data-placement="bottom" href="<?= base_url() ?>"><i class="fa fa-shopping-cart"></i></a></li>
-                    <?php } ?>
                     <?php if ($Owner) { ?>
                     <li class="dropdown hidden-sm">
                         <a class="btn tip" title="<?= lang('settings') ?>" data-placement="bottom" href="<?= admin_url('system_settings') ?>">
@@ -135,39 +132,6 @@
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if ($Owner || $Admin || $GP['calendar-index'] ||$events){ ?>
-                        <li class="dropdown hidden-xs">
-                            <a class="btn tip" title="<?= lang('calendar') ?>" data-placement="bottom" href="#" data-toggle="dropdown">
-                                <i class="fa fa-calendar"></i>
-                                <span class="number blightOrange black"><?= sizeof($events) ?></span>
-                            </a>
-                            <ul class="dropdown-menu pull-right content-scroll">
-                                <li class="dropdown-header">
-                                <i class="fa fa-calendar"></i> <?= lang('upcoming_events'); ?>
-                                </li>
-                                <li class="dropdown-content">
-                                    <div class="top-menu-scroll">
-                                        <ol class="oe">
-                                            <?php foreach ($events as $event) {
-                                                echo '<li>' . date($dateFormats['php_ldate'], strtotime($event->start)) . ' <strong>' . $event->title . '</strong><br>'.$event->description.'</li>';
-                                            } ?>
-                                        </ol>
-                                    </div>
-                                </li>
-                                <li class="dropdown-footer">
-                                    <a href="<?= admin_url('calendar') ?>" class="btn-block link">
-                                        <i class="fa fa-calendar"></i> <?= lang('calendar') ?>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    <?php } else { ?>
-                    <li class="dropdown hidden-xs">
-                        <a class="btn tip" title="<?= lang('calendar') ?>" data-placement="bottom" href="<?= admin_url('calendar') ?>">
-                            <i class="fa fa-calendar"></i>
-                        </a>
-                    </li>
-                    <?php } ?>
                     <li class="dropdown hidden-sm">
                         <a class="btn tip" title="<?= lang('styles') ?>" data-placement="bottom" data-toggle="dropdown"
                            href="#">
@@ -191,40 +155,6 @@
                            </li>
                         </ul>
                     </li>
-                    <li class="dropdown hidden-xs">
-                        <a class="btn tip" title="<?= lang('language') ?>" data-placement="bottom" data-toggle="dropdown"
-                           href="#">
-                            <img src="<?= base_url('assets/images/' . $Settings->user_language . '.png'); ?>" alt="">
-                        </a>
-                        <ul class="dropdown-menu pull-right">
-                            <?php $scanned_lang_dir = array_map(function ($path) {
-                                return basename($path);
-                            }, glob(APPPATH . 'language/*', GLOB_ONLYDIR));
-                            foreach ($scanned_lang_dir as $entry) { ?>
-                                <li>
-                                    <a href="<?= admin_url('welcome/language/' . $entry); ?>">
-                                        <img src="<?= base_url('assets/images/'.$entry.'.png'); ?>" class="language-img">
-                                        &nbsp;&nbsp;<?= ucwords($entry); ?>
-                                    </a>
-                                </li>
-                            <?php } ?>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="<?= admin_url('welcome/toggle_rtl') ?>">
-                                    <i class="fa fa-align-<?=$Settings->user_rtl ? 'right' : 'left';?>"></i>
-                                    <?= lang('toggle_alignment') ?>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <?php /* if ($Owner && $Settings->update) { ?>
-                    <li class="dropdown hidden-sm">
-                        <a class="btn blightOrange tip" title="<?= lang('update_available') ?>"
-                            data-placement="bottom" data-container="body" href="<?= admin_url('system_settings/updates') ?>">
-                            <i class="fa fa-download"></i>
-                        </a>
-                    </li>
-                        <?php } */ ?>
                     <?php if (($Owner || $Admin || $GP['reports-quantity_alerts'] || $GP['reports-expiry_alerts']) && ($qty_alert_num > 0 || $exp_alert_num > 0 || $shop_sale_alerts)) { ?>
                         <li class="dropdown hidden-sm">
                             <a class="btn blightOrange tip" title="<?= lang('alerts') ?>"
@@ -268,7 +198,8 @@
                             </ul>
                         </li>
                     <?php } ?>
-                    <?php if (POS) { ?>
+<!--                    --><?php //if (POS) { ?>
+                    <?php if ($Owner || $Admin) { ?>
                     <li class="dropdown hidden-xs">
                         <a class="btn bdarkGreen tip" title="<?= lang('pos') ?>" data-placement="bottom" href="<?= admin_url('pos') ?>">
                             <i class="fa fa-th-large"></i> <span class="padding05"><?= lang('pos') ?></span>
@@ -285,7 +216,8 @@
                         </li>
                     <?php } ?>
                     <?php if ($Owner || $Admin) { ?>
-                    <?php if (POS) { ?>
+                    <?php if ($Owner || $Admin) { ?>
+<!--                    --><?php //if (POS) { ?>
                     <li class="dropdown hidden-xs">
                         <a class="btn bblue tip" title="<?= lang('list_open_registers') ?>" data-placement="bottom" href="<?= admin_url('pos/registers') ?>">
                             <i class="fa fa-list"></i>
@@ -591,7 +523,7 @@
                             </li>
                             <li class="mm_calendar">
                                 <a class="submenu" href="<?= admin_url('calendar'); ?>">
-                                    <i class="fa fa-calendar"></i><span class="text"> <?= lang('calendar'); ?></span>
+                                    <i class="fa fa-calendar"></i><span class="text"> <?= lang('Menu_Calendar'); ?></span>
                                 </a>
                             </li>
                             <?php if ($Owner) { ?>

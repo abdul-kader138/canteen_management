@@ -1056,6 +1056,16 @@ $(document).ready(function() {
         return false;
     });
 });
+
+$(document).ready(function() {
+    $(document).on('click', '.food_order', function(e) {
+        e.preventDefault;
+        var id = $(this).attr('id');
+        console.log(id);
+            $('#myModal').modal({ remote: site.base_url + 'sales/food_order/' + id });
+            $('#myModal').modal('show');
+    });
+});
 /*
  $(window).scroll(function() {
     if ($(this).scrollTop()) {

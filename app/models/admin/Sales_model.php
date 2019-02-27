@@ -860,4 +860,21 @@ class Sales_model extends CI_Model
         $this->site->syncQuantity(null, null, null, $product_id);
     }
 
+    public function getTodayMenuByID($id)
+    {
+        $q = $this->db->get_where('calendar', array('id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
+
+    public function addOrder($data = array())
+    {
+        if ($this->db->insert('food_order_details', $data)) {
+            $cid = $this->db->insert_id();
+            return $cid;
+        }
+        return false;
+    }
 }

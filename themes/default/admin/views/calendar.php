@@ -40,7 +40,7 @@
 </style>
 <div class="box">
     <div class="box-header">
-        <h2 class="blue"><i class="fa-fw fa fa-calendar"></i><?= lang('calendar'); ?></h2>
+        <h2 class="blue"><i class="fa-fw fa fa-calendar"></i><?= lang('Menu_Calendar'); ?></h2>
     </div>
     <div class="box-content">
         <div class="row">
@@ -122,7 +122,7 @@
     cal_lang['event_error'] = '<?= lang('event_error'); ?>';
 </script>
 <script src='<?= $assets ?>fullcalendar/js/moment.min.js'></script>
-<script src="<?= $assets ?>fullcalendar/js/fullcalendar.min.js"></script>
+<script src="<?= $assets ?>fullcalendar/js/fullcalendar.js"></script>
 <script src="<?= $assets ?>fullcalendar/js/lang-all.js"></script>
 <script src='<?= $assets ?>fullcalendar/js/bootstrap-colorpicker.min.js'></script>
 <script src='<?= $assets ?>fullcalendar/js/main.js'></script>
