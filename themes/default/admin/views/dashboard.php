@@ -44,7 +44,7 @@ function row_status($x)
         </div>
     </div>
 <?php } ?>
-<?php if (!$food_ordered) {  ?>
+<?php if (!$food_ordered && $menus) {  ?>
 <div class="row" style="margin-bottom: 15px;">
     <div class="col-lg-12">
         <div class="box">
