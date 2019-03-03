@@ -337,6 +337,21 @@
                                         <input type="checkbox" value="1" class="checkbox" name="calendar-delete_menu" <?php echo $p->{'calendar-delete_menu'} ? "checked" : ''; ?>>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td><?= lang("Food_Order"); ?></td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="meal-index" <?php echo $p->{'meal-index'} ? "checked" : ''; ?>>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="meal-food_order" <?php echo $p->{'meal-food_order'} ? "checked" : ''; ?>>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="meal-edit_food_order" <?php echo $p->{'meal-edit_food_order'} ? "checked" : ''; ?>>
+                                    </td>
+                                    <td class="text-center">
+                                        <input type="checkbox" value="1" class="checkbox" name="meal-delete_food_order" <?php echo $p->{'meal-delete_food_order'} ? "checked" : ''; ?>>
+                                    </td>
+                                </tr>
 
                                 <tr>
                                     <td><?= lang("reports"); ?></td>

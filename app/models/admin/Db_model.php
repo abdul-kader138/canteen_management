@@ -191,4 +191,16 @@ class Db_model extends CI_Model
         }
         return FALSE;
     }
+
+    public function getTodayOrderByDateAndID($date)
+    {
+        $q = $this->db->get_where("food_order_details", array('order_date =' => $date,'user_id'=>$this->session->userdata('user_id')), 1);
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
 }

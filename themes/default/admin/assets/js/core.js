@@ -1062,7 +1062,7 @@ $(document).ready(function() {
         e.preventDefault;
         var id = $(this).attr('id');
         console.log(id);
-            $('#myModal').modal({ remote: site.base_url + 'sales/food_order/' + id });
+            $('#myModal').modal({ remote: site.base_url + 'meal/food_order/' + id });
             $('#myModal').modal('show');
     });
 });

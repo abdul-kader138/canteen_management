@@ -38,7 +38,7 @@ class Welcome extends MY_Controller
         $this->data['stock'] = $this->db_model->getStockValue();
         $this->data['bs'] = $this->db_model->getBestSeller();
         $this->data['menus'] = $this->db_model->getEventByDate(date('Y-m-d'));
-        $this->data['food_ordered'] = $this->db_model->getTodayOrderByDate(date('Y-m-d'));
+        $this->data['food_ordered'] = $this->db_model->getTodayOrderByDateAndID(date('Y-m-d'));
         $lmsdate = date('Y-m-d', strtotime('first day of last month')) . ' 00:00:00';
         $lmedate = date('Y-m-d', strtotime('last day of last month')) . ' 23:59:59';
         $this->data['lmbs'] = $this->db_model->getBestSeller($lmsdate, $lmedate);

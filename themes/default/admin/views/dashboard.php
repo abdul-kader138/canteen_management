@@ -44,61 +44,73 @@ function row_status($x)
         </div>
     </div>
 <?php } ?>
-<?php if (!$food_ordered && $menus) {  ?>
-<div class="row" style="margin-bottom: 15px;">
-    <div class="col-lg-12">
-        <div class="box">
-            <div class="box-header">
-                <h2 class="blue"><i class="fa fa-th"></i><span class="break"></span><?= lang("Today's Menu") ?>
-                </h2>
-            </div>
-            <div class="box-content">
-                <div class="col-sm-6">
-                    <div class="small-box padding1010 borange">
-                        <h3 class="bold food_order" style="cursor:pointer" id="<?php if(isset($menus) && sizeof($menus)>0) echo $menus[0]->id; ?>"><b><?php if(isset($menus) && sizeof($menus)>0) echo $menus[0]->title;
-                                else{
-                                    echo '&nbsp';
-                                    echo '&nbsp';
-                                    echo '&nbsp';
-                                    echo '&nbsp';
-                                    echo 'No Menu Available';
-                                    echo '&nbsp';
-                                    echo '&nbsp';
-                                    echo '&nbsp';
-                                    echo '&nbsp';
-                                    echo '</br>';
-                                }
-                        ?></b></h3>
-                        <i class="icon fa fa-star"></i>
-                        <p class="bold"><?php if(isset($menus) && sizeof($menus)>0) echo $menus[0]->product_name; ?></p>
+<?php if (!$food_ordered && $menus) {
+    $current_time = date("H:i:s");
+    $fixed_time = strtotime("24:00:00");
+    $time = strtotime($current_time);
+    if ($fixed_time >= $time) {?>
+
+        <div class="row" style="margin-bottom: 15px;">
+            <div class="col-lg-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h2 class="blue"><i class="fa fa-th"></i><span class="break"></span><?= lang("Today's Menu") ?>
+                        </h2>
+                    </div>
+                    <div class="box-content">
+                        <div class="col-sm-6">
+                            <div class="small-box padding1010 borange">
+                                <h3 class="bold food_order" style="cursor:pointer"
+                                    id="<?php if (isset($menus) && sizeof($menus) > 0) echo $menus[0]->id; ?>">
+                                    <b><?php if (isset($menus) && sizeof($menus) > 0) echo $menus[0]->title;
+                                        else {
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo 'No Menu Available';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '</br>';
+                                        }
+                                        ?></b></h3>
+                                <i class="icon fa fa-star"></i>
+                                <p class="bold"><?php if (isset($menus) && sizeof($menus) > 0) echo $menus[0]->product_name; ?></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="small-box padding1010 bdarkGreen">
+                                <h3 class="bold food_order" style="cursor:pointer"
+                                    id="<?php if (isset($menus) && sizeof($menus) > 1) echo $menus[1]->id; ?>">
+                                    <b><?php if (isset($menus) && sizeof($menus) > 1) echo $menus[1]->title;
+                                        else {
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo 'No Menu Available';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '&nbsp';
+                                            echo '</br>';
+                                        }
+                                        ?></b></h3>
+                                <i class="icon fa fa-star"></i>
+                                <p class="bold"><?php if (isset($menus) && sizeof($menus) > 1) echo $menus[1]->product_name; ?></p>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
                     </div>
                 </div>
-                <div class="col-sm-6">
-                    <div class="small-box padding1010 bdarkGreen">
-                        <h3 class="bold food_order" style="cursor:pointer" id="<?php if(isset($menus) && sizeof($menus)>1) echo $menus[1]->id; ?>"><b><?php if(isset($menus) && sizeof($menus)>1) echo $menus[1]->title;
-                        else{
-                           echo '&nbsp';
-                           echo '&nbsp';
-                           echo '&nbsp';
-                           echo '&nbsp';
-                           echo 'No Menu Available';
-                           echo '&nbsp';
-                           echo '&nbsp';
-                           echo '&nbsp';
-                           echo '&nbsp';
-                           echo '</br>';
-                        }
-                        ?></b></h3>
-                        <i class="icon fa fa-star"></i>
-                        <p class="bold"><?php if(isset($menus) && sizeof($menus)>1) echo $menus[1]->product_name; ?></p>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
             </div>
         </div>
-    </div>
-</div>
-<?php } ?>
+        <?php
+    }
+}
+?>
 <?php if ($Owner || $Admin) { ?>
     <div class="row" style="margin-bottom: 15px;">
         <div class="col-lg-12">
@@ -202,7 +214,7 @@ function row_status($x)
                 </div>
                 <div class="box-content">
                     <?php if ($GP['products-index']) { ?>
-                        <div class="col-lg-1 col-md-2 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-xs-12">
                             <a class="bblue white quick-button small" href="<?= admin_url('products') ?>">
                                 <i class="fa fa-barcode"></i>
                                 <p><?= lang('products') ?></p>
@@ -210,7 +222,7 @@ function row_status($x)
                         </div>
                     <?php }
                     if ($GP['sales-index']) { ?>
-                        <div class="col-lg-1 col-md-2 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-xs-6">
                             <a class="bdarkGreen white quick-button small" href="<?= admin_url('sales') ?>">
                                 <i class="fa fa-heart"></i>
                                 <p><?= lang('sales') ?></p>
@@ -218,7 +230,7 @@ function row_status($x)
                         </div>
                     <?php }
                     if ($GP['quotes-index']) { ?>
-                        <div class="col-lg-1 col-md-2 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-xs-6">
                             <a class="blightOrange white quick-button small" href="<?= admin_url('quotes') ?>">
                                 <i class="fa fa-heart-o"></i>
                                 <p><?= lang('quotes') ?></p>
@@ -226,7 +238,7 @@ function row_status($x)
                         </div>
                     <?php }
                     if ($GP['purchases-index']) { ?>
-                        <div class="col-lg-1 col-md-2 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-xs-6">
                             <a class="bred white quick-button small" href="<?= admin_url('purchases') ?>">
                                 <i class="fa fa-star"></i>
                                 <p><?= lang('purchases') ?></p>
@@ -234,7 +246,7 @@ function row_status($x)
                         </div>
                     <?php }
                     if ($GP['transfers-index']) { ?>
-                        <div class="col-lg-1 col-md-2 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-xs-6">
                             <a class="bpink white quick-button small" href="<?= admin_url('transfers') ?>">
                                 <i class="fa fa-star-o"></i>
                                 <p><?= lang('transfers') ?></p>
@@ -242,7 +254,7 @@ function row_status($x)
                         </div>
                     <?php }
                     if ($GP['customers-index']) { ?>
-                        <div class="col-lg-1 col-md-2 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-xs-6">
                             <a class="bgrey white quick-button small" href="<?= admin_url('customers') ?>">
                                 <i class="fa fa-users"></i>
                                 <p><?= lang('customers') ?></p>
@@ -250,13 +262,21 @@ function row_status($x)
                         </div>
                     <?php }
                     if ($GP['suppliers-index']) { ?>
-                        <div class="col-lg-1 col-md-2 col-xs-6">
+                        <div class="col-lg-2 col-md-2 col-xs-6">
                             <a class="bgrey white quick-button small" href="<?= admin_url('suppliers') ?>">
                                 <i class="fa fa-users"></i>
 
                                 <p><?= lang('suppliers') ?></p>
                             </a>
                         </div>
+                    <?php } ?>
+                    <?php if ($GP['meal-index']) { ?>
+                    <div class="col-lg-2 col-md-2 col-xs-6">
+                        <a class="bpink white quick-button small" href="<?= admin_url('meal') ?>">
+                            <i class="fa fa-cutlery"></i>
+                            <p><?= lang('Order_Details') ?></p>
+                        </a>
+                    </div>
                     <?php } ?>
                     <div class="clearfix"></div>
                 </div>

@@ -805,6 +805,10 @@ class system_settings extends MY_Controller
                 'calendar-add_menu' => $this->input->post('calendar-add_menu'),
                 'calendar-edit_menu' => $this->input->post('calendar-edit_menu'),
                 'calendar-delete_menu' => $this->input->post('calendar-delete_menu'),
+                'meal-index' => $this->input->post('meal-index'),
+                'meal-food_order' => $this->input->post('meal-food_order'),
+                'meal-edit_food_order' => $this->input->post('meal-edit_food_order'),
+                'meal-delete_food_order' => $this->input->post('meal-delete_food_order'),
             );
 
             if (POS) {
