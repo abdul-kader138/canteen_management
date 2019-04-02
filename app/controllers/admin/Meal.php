@@ -133,4 +133,14 @@ class Meal extends MY_Controller
 //            $this->sma->send_json(array('error' => 1, 'msg' => lang("biller_x_deleted_have_sales")));
 //        }
 //    }
+
+    public function getMenus($date = NULL)
+    {
+        // $this->sma->checkPermissions('index');
+        $s_date = $this->sma->fld($this->input->get('date'));
+//        $s_date=$this->sma->fld($this->input->post('date'));
+        $row = $this->meal_model->getMenusByDate($s_date);
+        $this->sma->send_json($row);
+    }
+
 }

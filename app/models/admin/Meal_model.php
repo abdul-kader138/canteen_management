@@ -35,4 +35,18 @@ class Meal_model extends CI_Model
         if ($this->db->trans_status() === FALSE) return false;
         return true;
     }
+
+    public function getMenusByDate($date)
+    {
+        $this->db->select("id, title, product_name");
+        $q = $this->db->get_where('calendar', array('start' => $date));
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
+
 }
