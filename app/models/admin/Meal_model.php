@@ -49,4 +49,14 @@ class Meal_model extends CI_Model
         return FALSE;
     }
 
+    public function getOrderByDate($date)
+    {
+        $this->db->select("id, title, user_id");
+        $q = $this->db->get_where('food_order_details', array('order_date' => trim($date)), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
+
 }

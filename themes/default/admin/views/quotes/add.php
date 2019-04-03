@@ -105,10 +105,27 @@
             }
         });
 
-
         $("#addCF").click(function () {
             rowCount = $('table#quTable tr:last').index() + 1;
-            console.log(rowCount);
+            if (rowCount > 0) {
+                var isinValidRow = false;
+                $(".datelist").each(function () {
+                    var ids = this.id;
+                    var idVal = $('#' + ids).val();
+                    if (idVal == undefined || idVal == null || idVal == '') {
+                        iziToast.show({
+                            title: 'Warning:',
+                            color: 'yellow',
+                            progressBar: true,
+                            message: 'Please fill the blank line information first'
+                        });
+                        isinValidRow = false;
+                    }
+                });
+                // return isinValidRow;
+            }
+
+
             if (rowCount <= 6) {
                 var row_id = 0;
                 if (!localStorage.getItem('row_id')) localStorage.setItem('row_id', 1);
@@ -117,14 +134,14 @@
                     row_id = (parseInt(row_id) + 1);
                     localStorage.setItem('row_id', row_id)
                 }
-                $("#quTable").append('<tr><td width="20%"><input class="form-control input-tip date" readonly type="text" name="orderDate[]" value="" placeholder="Select date" onchange="setMenuList(this)" id="row_id_' + row_id + '"/></td><td width="55%" id="menu_id_' + row_id + '"></td><td width="20%"><input type="text" class="form-control input-tip" name="menu_quantity[]" value="" placeholder="Quantity" /></td><td width="5%" style="text-align: center;"><a href="javascript:void(0);" class="remCF"><i class="fa fa-trash-o"></i></a></td></tr>');
-                // $('#row_id_'+row_id).datepicker({minDate: 0});
+                $("#quTable").append('<tr><td width="20%"><input class="form-control datelist input-tip date" readonly type="text" name="orderDate[]" value="" placeholder="Select date" onchange="setMenuList(this)" id="row_id_' + row_id + '"/></td><td width="55%" id="menu_id_' + row_id + '"></td><td width="20%"><input type="text" class="form-control input-tip" name="menu_quantity[]" value="" placeholder="Quantity" /></td><td width="5%" style="text-align: center;"><a href="javascript:void(0);" class="remCF"><i class="fa fa-trash-o"></i></a></td></tr>');
             }
         });
 
         $("#quTable").on('click', '.remCF', function () {
             $(this).parent().parent().remove();
         });
+
     });
 </script>
 

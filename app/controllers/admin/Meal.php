@@ -134,12 +134,18 @@ class Meal extends MY_Controller
 //        }
 //    }
 
-    public function getMenus($date = NULL)
+    function getMenus($date = NULL)
     {
         // $this->sma->checkPermissions('index');
         $s_date = $this->sma->fld($this->input->get('date'));
-//        $s_date=$this->sma->fld($this->input->post('date'));
         $row = $this->meal_model->getMenusByDate($s_date);
+        $this->sma->send_json($row);
+    }
+
+
+    function checkDuplicateOrder($date = NULL){
+        $s_date = $this->sma->fld($this->input->get('date'));
+        $row = $this->meal_model->getOrderByDate($s_date);
         $this->sma->send_json($row);
     }
 

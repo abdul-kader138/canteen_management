@@ -998,7 +998,6 @@ function add_invoice_item(item) {
 
     var item_id = site.settings.item_addition == 1 ? item.item_id : item.id;
     if (quitems[item_id]) {
-
         var new_qty = parseFloat(quitems[item_id].row.qty) + 1;
         quitems[item_id].row.base_quantity = new_qty;
         if (quitems[item_id].row.unit != quitems[item_id].row.base_unit) {
@@ -1028,13 +1027,97 @@ if (typeof (Storage) === "undefined") {
     });
 }
 
+
+function checkDuplicateOrder(order_date) {
+    var isDuplicate = false;
+    $.ajax({
+        type: "get", async: false,
+        url: site.base_url + "meal/checkDuplicateOrder/",
+        dataType: "json",
+        data: {
+            date: order_date
+        },
+        success: function (data) {
+            if (data.id) isDuplicate = true;
+        }
+    });
+    return isDuplicate;
+
+}
+
 function setMenuList(obj) {
-    console.log(obj);
     var date_id = obj.id;
     var id = date_id.split("_");
     var menu_id = 'menu_id_' + id[2];
-    console.log(id[2]);
-    console.log($('#' + date_id).val());
+
+    // all validation
+    var GivenDate = $('#' + date_id).val();
+    var from = $('#' + date_id).val();
+    var numbers = from.match(/\d+/g);
+    var dates = new Date(numbers[2], (numbers[1] - 1), numbers[0]);
+    var CurrentDate = new Date();
+    GivenDate = new Date(GivenDate);
+
+
+    // not less than current date
+    if (GivenDate < CurrentDate) {
+        $('#' + date_id).val('');
+        iziToast.show({
+            title: 'Warning:',
+            color: 'yellow',
+            progressBar: true,
+            message: 'Date cannot be less than Today'
+        });
+        return true;
+    }
+    // not more than 7 days
+    CurrentDate.setDate(CurrentDate.getDate() + 7);
+    if (dates > CurrentDate) {
+        $('#' + date_id).val('');
+        iziToast.show({
+            title: 'Warning:',
+            color: 'yellow',
+            progressBar: true,
+            message: 'Date cannot be more than 7 days from Today'
+        });
+        return true;
+    }
+
+
+    // stop duplicate data adding into list
+    var count = 0;
+    $(".datelist").each(function () {
+        if (this.id) {
+            var dateListId = this.id;
+            var dateListIdVal = $('#' + dateListId).val();
+            if (dateListIdVal === $('#' + date_id).val()) count = count + 1;
+        }
+    });
+    if (count > 1) {
+        $('#' + date_id).val('');
+        iziToast.show({
+            title: 'Warning:',
+            color: 'yellow',
+            progressBar: true,
+            message: 'Date already added into list'
+        });
+        return true;
+    }
+
+
+    //Check already order placed for selected date
+    var isDuplicateOrder = checkDuplicateOrder($('#' + date_id).val());
+    if (isDuplicateOrder) {
+        $('#' + date_id).val('');
+        iziToast.show({
+            title: 'Warning:',
+            color: 'yellow',
+            progressBar: true,
+            message: 'Order already found for this date'
+        });
+        return true;
+    }
+
     $.ajax({
         type: "get", async: false,
         url: site.base_url + "meal/getMenus/",
@@ -1045,18 +1128,25 @@ function setMenuList(obj) {
         },
         success: function (data) {
             $(this).removeClass('ui-autocomplete-loading');
-            $('#sel_menu_id_'+id[2]).remove();
+            $('#sel_menu_id_' + id[2]).remove();
             if (data) {
-                var opt = $("<select id='sel_menu_id_"+id[2]+"' name='poption' class='form-control select' />");
+                var opt = $("<select id='sel_menu_id_" + id[2] + "' name='poption' class='form-control select' />");
                 $.each(data, function () {
                     $("<option />", {value: this.id, text: this.product_name}).appendTo(opt);
-                    // o++;
                 });
-                $('#'+menu_id).append(opt);
+                $('#' + menu_id).append(opt);
+            }else{
+                $('#' + date_id).val('');
+                iziToast.show({
+                    title: 'Warning:',
+                    color: 'yellow',
+                    progressBar: true,
+                    message: 'Still,Menu not set for this date.'
+                });
             }
-            // $('#'+menu_id).append(opt);
-
         }
     });
 
 }
+
+
