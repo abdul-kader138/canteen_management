@@ -725,6 +725,13 @@
                                                         <i class="fa fa-heart-o"></i>
                                                         <span class="text"> <?= lang('List_Order'); ?></span>
                                                     </a>
+
+                                                </li>
+                                                <li id="meal_add">
+                                                <a class="submenu" href="<?= admin_url('meal/add'); ?>">
+                                                    <i class="fa fa-plus"></i>
+                                                    <span class="text"> <?= lang('Food_Order'); ?></span>
+                                                </a>
                                                 </li>
                                             </ul>
                                         </li>

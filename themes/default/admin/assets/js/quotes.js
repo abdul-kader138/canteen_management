@@ -1130,7 +1130,7 @@ function setMenuList(obj) {
             $(this).removeClass('ui-autocomplete-loading');
             $('#sel_menu_id_' + id[2]).remove();
             if (data) {
-                var opt = $("<select id='sel_menu_id_" + id[2] + "' name='poption' class='form-control select' />");
+                var opt = $("<select id='sel_menu_id_" + id[2] + "' name='menu_id[]' class='form-control select' />");
                 $.each(data, function () {
                     $("<option />", {value: this.id, text: this.product_name}).appendTo(opt);
                 });

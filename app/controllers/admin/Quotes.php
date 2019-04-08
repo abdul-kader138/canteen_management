@@ -60,12 +60,12 @@ class Quotes extends MY_Controller
         $pc_link = anchor('admin/purchases/add/$1', '<i class="fa fa-star"></i> ' . lang('create_purchase'));
         $pdf_link = anchor('admin/quotes/pdf/$1', '<i class="fa fa-file-pdf-o"></i> ' . lang('download_pdf'));
         $delete_link = "<a href='#' class='po' title='<b>" . $this->lang->line("delete_quote") . "</b>' data-content=\"<p>"
-        . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . admin_url('quotes/delete/$1') . "'>"
-        . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i> "
-        . lang('delete_quote') . "</a>";
+            . lang('r_u_sure') . "</p><a class='btn btn-danger po-delete' href='" . admin_url('quotes/delete/$1') . "'>"
+            . lang('i_m_sure') . "</a> <button class='btn po-close'>" . lang('no') . "</button>\"  rel='popover'><i class=\"fa fa-trash-o\"></i> "
+            . lang('delete_quote') . "</a>";
         $action = '<div class="text-center"><div class="btn-group text-left">'
-        . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
-        . lang('actions') . ' <span class="caret"></span></button>
+            . '<button type="button" class="btn btn-default btn-xs btn-primary dropdown-toggle" data-toggle="dropdown">'
+            . lang('actions') . ' <span class="caret"></span></button>
                     <ul class="dropdown-menu pull-right" role="menu">
                         <li>' . $detail_link . '</li>
                         <li>' . $edit_link . '</li>
@@ -168,7 +168,7 @@ class Quotes extends MY_Controller
         $this->data['inv'] = $inv;
         $name = $this->lang->line("quote") . "_" . str_replace('/', '_', $inv->reference_no) . ".pdf";
         $html = $this->load->view($this->theme . 'quotes/pdf', $this->data, true);
-        if (! $this->Settings->barcode_img) {
+        if (!$this->Settings->barcode_img) {
             $html = preg_replace("'\<\?xml(.*)\?\>'", '', $html);
         }
         if ($view) {
@@ -285,7 +285,7 @@ class Quotes extends MY_Controller
             $this->data['subject'] = array('name' => 'subject',
                 'id' => 'subject',
                 'type' => 'text',
-                'value' => $this->form_validation->set_value('subject', lang('quote').' (' . $inv->reference_no . ') '.lang('from').' '.$this->Settings->site_name),
+                'value' => $this->form_validation->set_value('subject', lang('quote') . ' (' . $inv->reference_no . ') ' . lang('from') . ' ' . $this->Settings->site_name),
             );
             $this->data['note'] = array('name' => 'note',
                 'id' => 'note',
@@ -301,198 +301,7 @@ class Quotes extends MY_Controller
         }
     }
 
-    public function add()
-    {
-        $this->sma->checkPermissions();
 
-        $this->form_validation->set_message('is_natural_no_zero', $this->lang->line("no_zero_required"));
-        $this->form_validation->set_rules('customer', $this->lang->line("customer"), 'required');
-
-        if ($this->form_validation->run() == true) {
-
-            $reference = $this->input->post('reference_no') ? $this->input->post('reference_no') : $this->site->getReference('qu');
-            if ($this->Owner || $this->Admin) {
-                $date = $this->sma->fld(trim($this->input->post('date')));
-            } else {
-                $date = date('Y-m-d H:i:s');
-            }
-            $warehouse_id = $this->input->post('warehouse');
-            $customer_id = $this->input->post('customer');
-            $biller_id = $this->input->post('biller');
-            $supplier_id = $this->input->post('supplier');
-            $status = $this->input->post('status');
-            $shipping = $this->input->post('shipping') ? $this->input->post('shipping') : 0;
-            $customer_details = $this->site->getCompanyByID($customer_id);
-            $customer = $customer_details->company != '-'  ? $customer_details->company : $customer_details->name;
-            $biller_details = $this->site->getCompanyByID($biller_id);
-            $biller = $biller_details->company != '-' ? $biller_details->company : $biller_details->name;
-            if ($supplier_id) {
-                $supplier_details = $this->site->getCompanyByID($supplier_id);
-                $supplier = $supplier_details->company != '-' ? $supplier_details->company : $supplier_details->name;
-            } else {
-                $supplier = NULL;
-            }
-            $note = $this->sma->clear_tags($this->input->post('note'));
-
-            $total = 0;
-            $product_tax = 0;
-            $product_discount = 0;
-            $gst_data = [];
-            $total_cgst = $total_sgst = $total_igst = 0;
-            $i = isset($_POST['product_code']) ? sizeof($_POST['product_code']) : 0;
-            for ($r = 0; $r < $i; $r++) {
-                $item_id = $_POST['product_id'][$r];
-                $item_type = $_POST['product_type'][$r];
-                $item_code = $_POST['product_code'][$r];
-                $item_name = $_POST['product_name'][$r];
-                $item_option = isset($_POST['product_option'][$r]) && $_POST['product_option'][$r] != 'false' ? $_POST['product_option'][$r] : null;
-                $real_unit_price = $this->sma->formatDecimal($_POST['real_unit_price'][$r]);
-                $unit_price = $this->sma->formatDecimal($_POST['unit_price'][$r]);
-                $item_unit_quantity = $_POST['quantity'][$r];
-                $item_tax_rate = isset($_POST['product_tax'][$r]) ? $_POST['product_tax'][$r] : null;
-                $item_discount = isset($_POST['product_discount'][$r]) ? $_POST['product_discount'][$r] : null;
-                $item_unit = $_POST['product_unit'][$r];
-                $item_quantity = $_POST['product_base_quantity'][$r];
-
-                if (isset($item_code) && isset($real_unit_price) && isset($unit_price) && isset($item_quantity)) {
-                    $product_details = $item_type != 'manual' ? $this->quotes_model->getProductByCode($item_code) : null;
-                    // $unit_price = $real_unit_price;
-                    $pr_discount = $this->site->calculateDiscount($item_discount, $unit_price);
-                    $unit_price = $this->sma->formatDecimal($unit_price - $pr_discount);
-                    $item_net_price = $unit_price;
-                    $pr_item_discount = $this->sma->formatDecimal($pr_discount * $item_unit_quantity);
-                    $product_discount += $pr_item_discount;
-                    $pr_item_tax = $item_tax = 0;
-                    $tax = "";
-
-                    if (isset($item_tax_rate) && $item_tax_rate != 0) {
-
-                        $tax_details = $this->site->getTaxRateByID($item_tax_rate);
-                        $ctax = $this->site->calculateTax($product_details, $tax_details, $unit_price);
-                        $item_tax = $ctax['amount'];
-                        $tax = $ctax['tax'];
-                        if (!$product_details || (!empty($product_details) && $product_details->tax_method != 1)) {
-                            $item_net_price = $unit_price - $item_tax;
-                        }
-                        $pr_item_tax = $this->sma->formatDecimal(($item_tax * $item_unit_quantity), 4);
-                        if ($this->Settings->indian_gst && $gst_data = $this->gst->calculteIndianGST($pr_item_tax, ($biller_details->state == $customer_details->state), $tax_details)) {
-                            $total_cgst += $gst_data['cgst'];
-                            $total_sgst += $gst_data['sgst'];
-                            $total_igst += $gst_data['igst'];
-                        }
-                    }
-
-                    $product_tax += $pr_item_tax;
-                    $subtotal = (($item_net_price * $item_unit_quantity) + $pr_item_tax);
-                    $unit = $this->site->getUnitByID($item_unit);
-
-                    $product = array(
-                        'product_id' => $item_id,
-                        'product_code' => $item_code,
-                        'product_name' => $item_name,
-                        'product_type' => $item_type,
-                        'option_id' => $item_option,
-                        'net_unit_price' => $item_net_price,
-                        'unit_price' => $this->sma->formatDecimal($item_net_price + $item_tax),
-                        'quantity' => $item_quantity,
-                        'product_unit_id' => $item_unit,
-                        'product_unit_code' => $unit->code,
-                        'unit_quantity' => $item_unit_quantity,
-                        'warehouse_id' => $warehouse_id,
-                        'item_tax' => $pr_item_tax,
-                        'tax_rate_id' => $item_tax_rate,
-                        'tax' => $tax,
-                        'discount' => $item_discount,
-                        'item_discount' => $pr_item_discount,
-                        'subtotal' => $this->sma->formatDecimal($subtotal),
-                        'real_unit_price' => $real_unit_price,
-                    );
-
-                    $products[] = ($product + $gst_data);
-                    $total += $this->sma->formatDecimal(($item_net_price * $item_unit_quantity), 4);
-                }
-            }
-            if (empty($products)) {
-                $this->form_validation->set_rules('product', lang("order_items"), 'required');
-            } else {
-                krsort($products);
-            }
-
-            $order_discount = $this->site->calculateDiscount($this->input->post('discount'), ($total + $product_tax));
-            $total_discount = $this->sma->formatDecimal(($order_discount + $product_discount), 4);
-            $order_tax = $this->site->calculateOrderTax($this->input->post('order_tax'), ($total + $product_tax - $order_discount));
-            $total_tax = $this->sma->formatDecimal(($product_tax + $order_tax), 4);
-            $grand_total = $this->sma->formatDecimal(($total + $total_tax + $this->sma->formatDecimal($shipping) - $order_discount), 4);
-            $data = array('date' => $date,
-                'reference_no' => $reference,
-                'customer_id' => $customer_id,
-                'customer' => $customer,
-                'biller_id' => $biller_id,
-                'biller' => $biller,
-                'supplier_id' => $supplier_id,
-                'supplier' => $supplier,
-                'warehouse_id' => $warehouse_id,
-                'note' => $note,
-                'total' => $total,
-                'product_discount' => $product_discount,
-                'order_discount_id' => $this->input->post('discount'),
-                'order_discount' => $order_discount,
-                'total_discount' => $total_discount,
-                'product_tax' => $product_tax,
-                'order_tax_id' => $this->input->post('order_tax'),
-                'order_tax' => $order_tax,
-                'total_tax' => $total_tax,
-                'shipping' => $this->sma->formatDecimal($shipping),
-                'grand_total' => $grand_total,
-                'status' => $status,
-                'created_by' => $this->session->userdata('user_id'),
-                'hash' => hash('sha256', microtime() . mt_rand()),
-            );
-            if ($this->Settings->indian_gst) {
-                $data['cgst'] = $total_cgst;
-                $data['sgst'] = $total_sgst;
-                $data['igst'] = $total_igst;
-            }
-
-            if ($_FILES['document']['size'] > 0) {
-                $this->load->library('upload');
-                $config['upload_path'] = $this->digital_upload_path;
-                $config['allowed_types'] = $this->digital_file_types;
-                $config['max_size'] = $this->allowed_file_size;
-                $config['overwrite'] = false;
-                $config['encrypt_name'] = true;
-                $this->upload->initialize($config);
-                if (!$this->upload->do_upload('document')) {
-                    $error = $this->upload->display_errors();
-                    $this->session->set_flashdata('error', $error);
-                    redirect($_SERVER["HTTP_REFERER"]);
-                }
-                $photo = $this->upload->file_name;
-                $data['attachment'] = $photo;
-            }
-
-            // $this->sma->print_arrays($data, $products);
-        }
-
-        if ($this->form_validation->run() == true && $this->quotes_model->addQuote($data, $products)) {
-            $this->session->set_userdata('remove_quls', 1);
-            $this->session->set_flashdata('message', $this->lang->line("quote_added"));
-            admin_redirect('quotes');
-        } else {
-
-            $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-
-            $this->data['billers'] = ($this->Owner || $this->Admin || !$this->session->userdata('biller_id')) ? $this->site->getAllCompanies('biller') : null;
-            //$this->data['currencies'] = $this->site->getAllCurrencies();
-            $this->data['units'] = $this->site->getAllBaseUnits();
-            $this->data['tax_rates'] = $this->site->getAllTaxRates();
-            $this->data['warehouses'] = ($this->Owner || $this->Admin || !$this->session->userdata('warehouse_id')) ? $this->site->getAllWarehouses() : null;
-            $this->data['qunumber'] = ''; //$this->site->getReference('qu');
-            $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('quotes'), 'page' => lang('quotes')), array('link' => '#', 'page' => lang('add_quote')));
-            $meta = array('page_title' => lang('add_quote'), 'bc' => $bc);
-            $this->page_construct('quotes/add', $meta, $this->data);
-        }
-    }
 
     public function edit($id = null)
     {
@@ -525,7 +334,7 @@ class Quotes extends MY_Controller
             $status = $this->input->post('status');
             $shipping = $this->input->post('shipping') ? $this->input->post('shipping') : 0;
             $customer_details = $this->site->getCompanyByID($customer_id);
-            $customer = $customer_details->company != '-'  ? $customer_details->company : $customer_details->name;
+            $customer = $customer_details->company != '-' ? $customer_details->company : $customer_details->name;
             $biller_details = $this->site->getCompanyByID($biller_id);
             $biller = $biller_details->company != '-' ? $biller_details->company : $biller_details->name;
             if ($supplier_id) {
@@ -863,7 +672,7 @@ class Quotes extends MY_Controller
                 $units = $this->site->getUnitsByBUID($row->base_unit);
                 $tax_rate = $this->site->getTaxRateByID($row->tax_rate);
 
-                $pr[] = array('id' => sha1($c.$r), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'category' => $row->category_id,
+                $pr[] = array('id' => sha1($c . $r), 'item_id' => $row->id, 'label' => $row->name . " (" . $row->code . ")", 'category' => $row->category_id,
                     'row' => $row, 'combo_items' => $combo_items, 'tax_rate' => $tax_rate, 'units' => $units, 'options' => $options);
                 $r++;
             }
@@ -959,7 +768,7 @@ class Quotes extends MY_Controller
 
             $this->data['inv'] = $this->quotes_model->getQuoteByID($id);
             $this->data['modal_js'] = $this->site->modal_js();
-            $this->load->view($this->theme.'quotes/update_status', $this->data);
+            $this->load->view($this->theme . 'quotes/update_status', $this->data);
 
         }
     }

@@ -52,11 +52,53 @@ class Meal_model extends CI_Model
     public function getOrderByDate($date)
     {
         $this->db->select("id, title, user_id");
-        $q = $this->db->get_where('food_order_details', array('order_date' => trim($date)), 1);
+        $q = $this->db->get_where('food_order_details', array('order_date' => trim($date),'user_id'=>$this->session->userdata('user_id')), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
         return FALSE;
     }
+
+
+    public function addOrderBatch($data)
+    {
+
+        $this->db->trans_strict(TRUE);
+        $this->db->trans_start();
+        if(!empty($data)) $this->db->insert_batch('food_order_details',$data);
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) return false;
+        return true;
+    }
+
+    public function deleteOrder($id)
+    {
+        if ($this->db->delete('food_order_details', array('id' => $id))) {
+            return true;
+        }
+        return FALSE;
+    }
+
+
+    public function getOrderByID($id)
+    {
+        $q = $this->db->get_where('food_order_details', array('id' => $id), 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
+
+    public function updateOrder($id,$data)
+    {
+        $this->db->trans_strict(TRUE);
+        $this->db->trans_start();
+        $this->db->delete('food_order_details', array('id' => $id));
+        if(!empty($data)) $this->db->insert_batch('food_order_details',$data);
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) return false;
+        return true;
+    }
+
 
 }
