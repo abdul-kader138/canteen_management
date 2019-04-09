@@ -123,6 +123,15 @@ class Meal extends MY_Controller
 
     public function delete_food_order($id)
     {
+
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['meal-delete_food_order'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        }
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
@@ -145,8 +154,15 @@ class Meal extends MY_Controller
 
     function checkDuplicateOrder($date = NULL)
     {
+        $row = true;
         $s_date = $this->sma->fld($this->input->get('date'));
-        $row = $this->meal_model->getOrderByDate($s_date);
+        if (trim($s_date) == date("Y-m-d")) {
+            $current_time = date("H:i:s");
+            $fixed_time = strtotime("11:00:00");
+            $time = strtotime($current_time);
+            if ($fixed_time < $time) $row = false;
+        }
+        if ($row) $row = $this->meal_model->getOrderByDate($s_date);
         $this->sma->send_json($row);
     }
 
@@ -233,6 +249,17 @@ class Meal extends MY_Controller
         $order_details = $this->meal_model->getOrderByID($id);
         $this->form_validation->set_rules('order_quantity', 'order_quantity', 'required');
         if ($this->form_validation->run() == true) {
+            if ($order_details->order_date == date("Y-m-d")) {
+                $current_time = date("H:i:s");
+                $fixed_time = strtotime("11:00:00");
+                $time = strtotime($current_time);
+                if ($fixed_time < $time) {
+                    $this->session->set_flashdata('warning', lang('Order edit time already passed.'));
+                    die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                    redirect('meal');
+                }
+            }
+
             $menu_id = $this->input->post('menu_name');
             $order_qty = $this->input->post('order_quantity');
             $info = $this->meal_model->getTodayMenuByID($menu_id);
@@ -252,11 +279,11 @@ class Meal extends MY_Controller
                 'note' => $this->sma->clear_tags($this->input->post('note')),
                 'qty' => 1
             );
-            if ($order_details->description=='Guest') {
+            if ($order_details->description == 'Guest') {
                 $product['description'] = 'Guest';
                 $product['discount_amount'] = 0;
             }
-            if ($order_qty > 1 && $order_details->description=='Own') {
+            if ($order_qty > 1 && $order_details->description == 'Own') {
                 $guest_product = $product;
                 $guest_product['description'] = 'Guest';
                 $guest_product['discount_amount'] = 0;
