@@ -1051,17 +1051,27 @@ function setMenuList(obj) {
     var menu_id = 'menu_id_' + id[2];
 
     // all validation
+
+    // user given date
     var GivenDate = $('#' + date_id).val();
     var from = $('#' + date_id).val();
     var numbers = from.match(/\d+/g);
     var dates = new Date(numbers[2], (numbers[1] - 1), numbers[0]);
-    var CurrentDate = new Date();
-    GivenDate = new Date(GivenDate);
+    GivenDate = new Date(dates);
 
+    // current date
+    var CurrentDate = new Date();
+    var twoDigitMonth = ((CurrentDate.getMonth().length+1) === 1)? (CurrentDate.getMonth()+1) : '0' + (CurrentDate.getMonth()+1);
+    var currentDates = CurrentDate.getDate() + "/" + twoDigitMonth + "/" + CurrentDate.getFullYear();
+    var numbers_1 = currentDates.match(/\d+/g);
+    var dates_1 = new Date(numbers_1[2], (numbers_1[1] - 1), numbers_1[0]);
+    var Current_Date = new Date(dates_1);
 
     // not less than current date
-    if (GivenDate < CurrentDate) {
+    if (GivenDate < Current_Date) {
         $('#' + date_id).val('');
+        $('#sel_menu_id_' + id[2]).remove();
+        $('#qty_id_' + id[2]).val();
         iziToast.show({
             title: 'Warning:',
             color: 'yellow',
@@ -1074,6 +1084,9 @@ function setMenuList(obj) {
     CurrentDate.setDate(CurrentDate.getDate() + 7);
     if (dates > CurrentDate) {
         $('#' + date_id).val('');
+        $('#sel_menu_id_' + id[2]).remove();
+        $('#qty_id_' + id[2]).val();
+
         iziToast.show({
             title: 'Warning:',
             color: 'yellow',

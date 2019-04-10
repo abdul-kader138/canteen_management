@@ -49,11 +49,15 @@
                 "mRender": checkbox
             }, {"mRender": id_conversion},null,null, null, null, null, null,null,{"mRender": order_status}, {"mRender": type_status}, {"bSortable": false}],
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
-                var gtotal = 0, paid = 0, balance = 0;
+                var gtotal = 0, stotal = 0, total = 0;
                 for (var i = 0; i < aaData.length; i++) {
+                    total += parseFloat(aaData[aiDisplay[i]][6]);
+                    stotal += parseFloat(aaData[aiDisplay[i]][7]);
                     gtotal += parseFloat(aaData[aiDisplay[i]][8]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
+                nCells[6].innerHTML =parseFloat(total);
+                nCells[7].innerHTML =parseFloat(stotal);
                 nCells[8].innerHTML =parseFloat(gtotal);
             }
         }).dtFilter([
@@ -62,8 +66,6 @@
             {column_number: 3, filter_default_label: "[<?=lang('Order_Date');?>]", filter_type: "text", data: []},
             {column_number: 4, filter_default_label: "[<?=lang('Menu');?>]", filter_type: "text", data: []},
             {column_number: 5, filter_default_label: "[<?=lang('Product_Name');?>]", filter_type: "text", data: []},
-            {column_number: 6, filter_default_label: "[<?=lang('Price');?>]", filter_type: "text", data: []},
-            {column_number: 7, filter_default_label: "[<?=lang('Subsidiary_Amount');?>]", filter_type: "text", data: []},
             {column_number: 9, filter_default_label: "[<?=lang('Status');?>]", filter_type: "text", data: []},
             {column_number: 10, filter_default_label: "[<?=lang('Type');?>]", filter_type: "text", data: []},
         ], "footer");
