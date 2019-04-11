@@ -809,6 +809,10 @@ class system_settings extends MY_Controller
                 'meal-food_order' => $this->input->post('meal-food_order'),
                 'meal-edit_food_order' => $this->input->post('meal-edit_food_order'),
                 'meal-delete_food_order' => $this->input->post('meal-delete_food_order'),
+
+
+                'reports-order_transaction_report' => $this->input->post('reports-order_transaction_report'),
+                'reports-order_summary_report' => $this->input->post('reports-order_summary_report'),
             );
 
             if (POS) {

@@ -356,6 +356,15 @@
                                 <tr>
                                     <td><?= lang("reports"); ?></td>
                                     <td colspan="5">
+
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" class="checkbox" id="order_transaction_report" name="reports-order_transaction_report" <?php echo $p->{'reports-order_transaction_report'} ? "checked" : ''; ?>>
+                                            <label for="suppliers" class="padding05"><?= lang('Order_Transaction_Report') ?></label>
+                                        </span>
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" class="checkbox" id="order_summary_report" name="reports-order_summary_report" <?php echo $p->{'reports-order_summary_report'} ? "checked" : ''; ?>>
+                                            <label for="suppliers" class="padding05"><?= lang('Order_Summary_Report') ?></label>
+                                        </span>
                                         <span style="display:inline-block;">
                                             <input type="checkbox" value="1" class="checkbox" id="product_quantity_alerts" name="reports-quantity_alerts" <?php echo $p->{'reports-quantity_alerts'} ? "checked" : ''; ?>>
                                             <label for="product_quantity_alerts" class="padding05"><?= lang('product_quantity_alerts') ?></label>
@@ -412,6 +421,7 @@
                                             <input type="checkbox" value="1" class="checkbox" id="suppliers" name="reports-suppliers" <?php echo $p->{'reports-suppliers'} ? "checked" : ''; ?>>
                                             <label for="suppliers" class="padding05"><?= lang('suppliers') ?></label>
                                         </span>
+
                                     </td>
                                 </tr>
 

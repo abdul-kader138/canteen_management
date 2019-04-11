@@ -728,10 +728,10 @@
 
                                                 </li>
                                                 <li id="meal_add">
-                                                <a class="submenu" href="<?= admin_url('meal/add'); ?>">
-                                                    <i class="fa fa-plus"></i>
-                                                    <span class="text"> <?= lang('Food_Order'); ?></span>
-                                                </a>
+                                                    <a class="submenu" href="<?= admin_url('meal/add'); ?>">
+                                                        <i class="fa fa-plus"></i>
+                                                        <span class="text"> <?= lang('Food_Order'); ?></span>
+                                                    </a>
                                                 </li>
                                             </ul>
                                         </li>
@@ -754,6 +754,13 @@
                                                     <a href="<?= admin_url('reports/warehouse_stock') ?>">
                                                         <i class="fa fa-building"></i><span
                                                                 class="text"> <?= lang('warehouse_stock'); ?></span>
+                                                    </a>
+                                                </li>
+
+                                                <li id="reports_order_transaction_report">
+                                                    <a href="<?= admin_url('reports/order_transaction_report') ?>">
+                                                        <i class="fa fa-history"></i><span
+                                                                class="text"> <?= lang('Order_Details_Report'); ?></span>
                                                     </a>
                                                 </li>
                                                 <li id="reports_best_sellers">
@@ -1248,7 +1255,7 @@
                                                 </a>
                                             </li>
                                         <?php } ?>
-                                        <?php if ($GP['meal-index'] ) { ?>
+                                        <?php if ($GP['meal-index']) { ?>
 
                                             <li class="mm_meal">
                                                 <a class="dropmenu" href="#">
@@ -1263,10 +1270,19 @@
                                                             <span class="text"> <?= lang('List_Order'); ?></span>
                                                         </a>
                                                     </li>
+
+                                                    <?php if ($GP['meal-food_order']) { ?>
+                                                        <li id="meal-add">
+                                                            <a class="submenu" href="<?= admin_url('meal/add'); ?>">
+                                                                <i class="fa fa-plus"></i>
+                                                                <span class="text"> <?= lang('Food_Order'); ?></span>
+                                                            </a>
+                                                        </li>
+                                                    <?php } ?>
                                                 </ul>
                                             </li>
                                         <?php } ?>
-                                        <?php if ($GP['reports-quantity_alerts'] || $GP['reports-expiry_alerts'] || $GP['reports-products'] || $GP['reports-monthly_sales'] || $GP['reports-sales'] || $GP['reports-payments'] || $GP['reports-purchases'] || $GP['reports-customers'] || $GP['reports-suppliers'] || $GP['reports-expenses']) { ?>
+                                        <?php if ($GP['reports-quantity_alerts'] || $GP['reports-expiry_alerts'] || $GP['reports-products'] || $GP['reports-monthly_sales'] || $GP['reports-sales'] || $GP['reports-payments'] || $GP['reports-purchases'] || $GP['reports-customers'] || $GP['reports-suppliers'] || $GP['reports-expenses'] || $GP['reports-order_transaction_report']) { ?>
                                             <li class="mm_reports">
                                                 <a class="dropmenu" href="#">
                                                     <i class="fa fa-bar-chart-o"></i>
@@ -1274,6 +1290,14 @@
                                                     <span class="chevron closed"></span>
                                                 </a>
                                                 <ul>
+                                                    <?php if ($GP['reports-order_transaction_report']) { ?>
+                                                        <li id="reports_order_transaction_report">
+                                                            <a href="<?= admin_url('reports/order_transaction_report') ?>">
+                                                                <i class="fa fa-calendar-o"></i><span
+                                                                        class="text"> <?= lang('Order_Details_report'); ?></span>
+                                                            </a>
+                                                        </li>
+                                                    <?php } ?>
                                                     <?php if ($GP['reports-quantity_alerts']) { ?>
                                                         <li id="reports_quantity_alerts">
                                                             <a href="<?= admin_url('reports/quantity_alerts') ?>">
