@@ -54,7 +54,6 @@
                                 <div class="controls">
                                     <input type="email" id="email" name="email" class="form-control"
                                            required="required"/>
-                                    <?php /* echo form_input('email', '', 'class="form-control" id="email" required="required"'); */ ?>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -89,6 +88,7 @@
                                 echo form_dropdown('status', $opt, (isset($_POST['status']) ? $_POST['status'] : ''), 'id="status" required="required" class="form-control select" style="width:100%;"');
                                 ?>
                             </div>
+
                             <div class="form-group">
                                 <?= lang("group", "group"); ?>
                                 <?php
@@ -143,12 +143,19 @@
                                     <?= lang("allow_discount", "allow_discount"); ?>
                                     <?= form_dropdown('allow_discount', $opts, (isset($_POST['allow_discount']) ? $_POST['allow_discount'] : 0), 'id="allow_discount" class="form-control select" style="width:100%;"'); ?>
                                 </div>
+
+                                <div class="form-group">
+                                    <?php echo lang('Discount(%)', 'Discount(%)'); ?>
+                                    <div class="controls">
+                                        <?php echo form_input('discount', '', 'class="form-control" id="discount"'); ?>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-md-8">
                                     <label class="checkbox" for="notify">
-                                        <input type="checkbox" name="notify" value="1" id="notify" checked="checked"/>
+                                        <input type="checkbox" name="notify" value="1" id="notify" />
                                         <?= lang('notify_user_by_email') ?>
                                     </label>
                                 </div>

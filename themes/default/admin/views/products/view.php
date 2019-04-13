@@ -37,11 +37,6 @@
                                         <i class="fa fa-print"></i> <?= lang('print_barcode_label') ?>
                                     </a>
                                 </li>
-                                <li>
-                                    <a href="<?= admin_url('products/pdf/' . $product->id) ?>">
-                                        <i class="fa fa-download"></i> <?= lang('pdf') ?>
-                                    </a>
-                                </li>
                                 <li class="divider"></li>
                                 <li>
                                     <a href="#" class="bpo" title="<b><?= lang("delete_product") ?></b>"
@@ -106,10 +101,7 @@
                                             <td><?= lang("code"); ?></td>
                                             <td><?php echo $product->code; ?></td>
                                         </tr>
-                                        <tr>
-                                            <td><?= lang("brand"); ?></td>
-                                            <td><?= $brand ? $brand->name : ''; ?></td>
-                                        </tr>
+
                                         <tr>
                                             <td><?= lang("category"); ?></td>
                                             <td><?php echo $category->name; ?></td>
@@ -167,7 +159,10 @@
                                                     } ?></td>
                                             </tr>
                                         <?php } ?>
-
+                                        <tr>
+                                            <td><?= lang("Discount_Amount"); ?></td>
+                                            <td><?= $product->discount_amount; ?></td>
+                                        </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -227,7 +222,8 @@
                                                     <tbody>
                                                     <?php foreach ($warehouses as $warehouse) {
                                                         if ($warehouse->quantity != 0) {
-                                                            echo '<tr><td>' . $warehouse->name . ' (' . $warehouse->code . ')</td><td><strong>' . $this->sma->formatQuantity($warehouse->quantity) . '</strong>' . ($warehouse->rack ? ' (' . $warehouse->rack . ')' : '') . '</td></tr>';
+//                                                            echo '<tr><td>' . $warehouse->name . ' (' . $warehouse->code . ')</td><td><strong>' . $this->sma->formatQuantity($warehouse->quantity) . '</strong>' . ($warehouse->rack ? ' (' . $warehouse->rack . ')' : '') . '</td></tr>';
+                                                            echo '<tr><td>' . $warehouse->name . ' (' . $warehouse->code . ')</td><td><strong>' . $this->sma->formatQuantity(0) . '</strong>' . ($warehouse->rack ? ' (' . $warehouse->rack . ')' : '') . '</td></tr>';
                                                         }
                                                     } ?>
                                                     </tbody>
@@ -307,11 +303,6 @@
                                     <a href="<?= admin_url('products/print_barcodes/' . $product->id) ?>" class="tip btn btn-primary" title="<?= lang('print_barcode_label') ?>">
                                         <i class="fa fa-print"></i>
                                         <span class="hidden-sm hidden-xs"><?= lang('print_barcode_label') ?></span>
-                                    </a>
-                                </div>
-                                <div class="btn-group">
-                                    <a href="<?= admin_url('products/pdf/' . $product->id) ?>" class="tip btn btn-primary" title="<?= lang('pdf') ?>">
-                                        <i class="fa fa-download"></i> <span class="hidden-sm hidden-xs"><?= lang('pdf') ?></span>
                                     </a>
                                 </div>
                                 <div class="btn-group">

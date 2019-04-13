@@ -84,7 +84,7 @@ if (!empty($variants)) {
                     <div class="form-group">
                         <?= lang("product_type", "type") ?>
                         <?php
-                        $opts = array('standard' => lang('standard'), 'combo' => lang('combo'), 'digital' => lang('digital'), 'service' => lang('service'));
+                        $opts = array('service' => lang('service'));
                         echo form_dropdown('type', $opts, (isset($_POST['type']) ? $_POST['type'] : ($product ? $product->type : '')), 'class="form-control" id="type" required="required"');
                         ?>
                     </div>
@@ -104,38 +104,6 @@ if (!empty($variants)) {
                     </div>
 
                     <div class="form-group all">
-                        <?= lang('slug', 'slug'); ?>
-                        <?= form_input('slug', set_value('slug'), 'class="form-control tip" id="slug" required="required"'); ?>
-                    </div>
-
-                    <div class="form-group all">
-                        <?= lang('second_name', 'second_name'); ?>
-                        <?= form_input('second_name', set_value('second_name'), 'class="form-control tip" id="second_name"'); ?>
-                    </div>
-
-                    <div class="form-group standard_combo">
-                        <?= lang('weight', 'weight'); ?>
-                        <?= form_input('weight', set_value('weight'), 'class="form-control tip" id="weight"'); ?>
-                    </div>
-                    <div class="form-group all">
-                        <?= lang("barcode_symbology", "barcode_symbology") ?>
-                        <?php
-                        $bs = array('code25' => 'Code25', 'code39' => 'Code39', 'code128' => 'Code128', 'ean8' => 'EAN8', 'ean13' => 'EAN13', 'upca' => 'UPC-A', 'upce' => 'UPC-E');
-                        echo form_dropdown('barcode_symbology', $bs, (isset($_POST['barcode_symbology']) ? $_POST['barcode_symbology'] : ($product ? $product->barcode_symbology : 'code128')), 'class="form-control select" id="barcode_symbology" required="required" style="width:100%;"');
-                        ?>
-
-                    </div>
-                    <div class="form-group all">
-                        <?= lang("brand", "brand") ?>
-                        <?php
-                        $br[''] = "";
-                        foreach ($brands as $brand) {
-                            $br[$brand->id] = $brand->name;
-                        }
-                        echo form_dropdown('brand', $br, (isset($_POST['brand']) ? $_POST['brand'] : ($product ? $product->brand : '')), 'class="form-control select" id="brand" placeholder="' . lang("select") . " " . lang("brand") . '" style="width:100%"')
-                        ?>
-                    </div>
-                    <div class="form-group all">
                         <?= lang("category", "category") ?>
                         <?php
                         $cat[''] = "";
@@ -152,7 +120,16 @@ if (!empty($variants)) {
                             ?>
                         </div>
                     </div>
-                    <div class="form-group standard">
+
+                    <div class="form-group all">
+                        <?= lang("barcode_symbology", "barcode_symbology") ?>
+                        <?php
+                        $bs = array('code25' => 'Code25', 'code39' => 'Code39', 'code128' => 'Code128', 'ean8' => 'EAN8', 'ean13' => 'EAN13', 'upca' => 'UPC-A', 'upce' => 'UPC-E');
+                        echo form_dropdown('barcode_symbology', $bs, (isset($_POST['barcode_symbology']) ? $_POST['barcode_symbology'] : ($product ? $product->barcode_symbology : 'code128')), 'class="form-control select" id="barcode_symbology" required="required" style="width:100%;"');
+                        ?>
+
+                    </div>
+                    <div class="form-group all">
                         <?= lang('product_unit', 'unit'); ?>
                         <?php
                         $pu[''] = lang('select').' '.lang('unit');
@@ -167,11 +144,7 @@ if (!empty($variants)) {
                         <?php $uopts[''] = lang('select_unit_first'); ?>
                         <?= form_dropdown('default_sale_unit', $uopts, ($product ? $product->sale_unit : ''), 'class="form-control" id="default_sale_unit" style="width:100%;"'); ?>
                     </div>
-                    <div class="form-group standard">
-                        <?= lang('default_purchase_unit', 'default_purchase_unit'); ?>
-                        <?= form_dropdown('default_purchase_unit', $uopts, ($product ? $product->purchase_unit : ''), 'class="form-control" id="default_purchase_unit" style="width:100%;"'); ?>
-                    </div>
-                    <div class="form-group standard">
+                    <div class="form-group all">
                         <?= lang("product_cost", "cost") ?>
                         <?= form_input('cost', (isset($_POST['cost']) ? $_POST['cost'] : ($product ? $this->sma->formatDecimal($product->cost) : '')), 'class="form-control tip" id="cost" required="required"') ?>
                     </div>
@@ -184,78 +157,12 @@ if (!empty($variants)) {
                         <?= form_input('discount_amount', (isset($_POST['discount_amount']) ? $_POST['discount_amount'] :''), 'class="form-control tip" id="discount_amount" ') ?>
                     </div>
 
-                    <div class="form-group">
-                        <input type="checkbox" class="checkbox" value="1" name="promotion" id="promotion" <?= $this->input->post('promotion') ? 'checked="checked"' : ''; ?>>
-                        <label for="promotion" class="padding05">
-                            <?= lang('promotion'); ?>
-                        </label>
-                    </div>
-
-                    <div id="promo" style="display:none;">
-                        <div class="well well-sm">
-                            <div class="form-group">
-                                <?= lang('promo_price', 'promo_price'); ?>
-                                <?= form_input('promo_price', set_value('promo_price'), 'class="form-control tip" id="promo_price"'); ?>
-                            </div>
-                            <div class="form-group">
-                                <?= lang('start_date', 'start_date'); ?>
-                                <?= form_input('start_date', set_value('start_date'), 'class="form-control tip date" id="start_date"'); ?>
-                            </div>
-                            <div class="form-group">
-                                <?= lang('end_date', 'end_date'); ?>
-                                <?= form_input('end_date', set_value('end_date'), 'class="form-control tip date" id="end_date"'); ?>
-                            </div>
-                        </div>
-                    </div>
-
-                    <?php if ($Settings->invoice_view == 2) { ?>
-                        <div class="form-group">
-                            <?= lang('hsn_code', 'hsn_code'); ?>
-                            <?= form_input('hsn_code', set_value('hsn_code', ($product ? $product->hsn_code : '')), 'class="form-control" id="hsn_code"'); ?>
-                        </div>
-                    <?php } ?>
-
-                    <?php if ($Settings->tax1) { ?>
-                        <div class="form-group all">
-                            <?= lang('product_tax', "tax_rate") ?>
-                            <?php
-                            $tr[""] = "";
-                            foreach ($tax_rates as $tax) {
-                                $tr[$tax->id] = $tax->name;
-                            }
-                            echo form_dropdown('tax_rate', $tr, (isset($_POST['tax_rate']) ? $_POST['tax_rate'] : ($product ? $product->tax_rate : $Settings->default_tax_rate)), 'class="form-control select" id="tax_rate" placeholder="' . lang("select") . ' ' . lang("product_tax") . '" style="width:100%"')
-                            ?>
-                        </div>
-                        <div class="form-group all">
-                            <?= lang("tax_method", "tax_method") ?>
-                            <?php
-                            $tm = array('1' => lang('exclusive'), '0' => lang('inclusive'));
-                            echo form_dropdown('tax_method', $tm, (isset($_POST['tax_method']) ? $_POST['tax_method'] : ($product ? $product->tax_method : '')), 'class="form-control select" id="tax_method" placeholder="' . lang("select") . ' ' . lang("tax_method") . '" style="width:100%"');
-                            ?>
-                        </div>
-                    <?php } ?>
-                    <div class="form-group standard">
-                        <?= lang("alert_quantity", "alert_quantity") ?>
-                        <div
-                            class="input-group"> <?= form_input('alert_quantity', (isset($_POST['alert_quantity']) ? $_POST['alert_quantity'] : ($product ? $this->sma->formatQuantityDecimal($product->alert_quantity) : '')), 'class="form-control tip" id="alert_quantity"') ?>
-                            <span class="input-group-addon">
-                            <input type="checkbox" name="track_quantity" id="track_quantity"
-                                   value="1" <?= ($product ? (isset($product->track_quantity) ? 'checked="checked"' : '') : 'checked="checked"') ?>>
-                        </span>
-                        </div>
-                    </div>
-
                     <div class="form-group all">
                         <?= lang("product_image", "product_image") ?>
                         <input id="product_image" type="file" data-browse-label="<?= lang('browse'); ?>" name="product_image" data-show-upload="false"
                                data-show-preview="false" accept="image/*" class="form-control file">
                     </div>
 
-                    <div class="form-group all">
-                        <?= lang("product_gallery_images", "images") ?>
-                        <input id="images" type="file" data-browse-label="<?= lang('browse'); ?>" name="userfile[]" multiple="true" data-show-upload="false"
-                               data-show-preview="false" class="form-control file" accept="image/*">
-                    </div>
                     <div id="img-details"></div>
                 </div>
                 <div class="col-md-6 col-md-offset-1">
@@ -282,221 +189,16 @@ if (!empty($variants)) {
                                 </div>
                                 <div style="clear:both;"></div>
                             </div>
-                            <div class="table-responsive">
-                                <table id="attrTable" class="table table-bordered table-condensed table-striped"
-                                       style="<?= $this->input->post('attributes') || $product_options ? '' : 'display:none;'; ?>margin-bottom: 0; margin-top: 10px;">
-                                    <thead>
-                                    <tr class="active">
-                                        <th><?= lang('name') ?></th>
-                                        <th><?= lang('warehouse') ?></th>
-                                        <th><?= lang('quantity') ?></th>
-                                        <th><?= lang('price_addition') ?></th>
-                                        <th><i class="fa fa-times attr-remove-all"></i></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody><?php
-                                    if ($this->input->post('attributes')) {
-                                        $a = sizeof($_POST['attr_name']);
-                                        for ($r = 0; $r <= $a; $r++) {
-                                            if (isset($_POST['attr_name'][$r]) && (isset($_POST['attr_warehouse'][$r]) || isset($_POST['attr_quantity'][$r]))) {
-                                                echo '<tr class="attr"><td><input type="hidden" name="attr_name[]" value="' . $_POST['attr_name'][$r] . '"><span>' . $_POST['attr_name'][$r] . '</span></td><td class="code text-center"><input type="hidden" name="attr_warehouse[]" value="' . $_POST['attr_warehouse'][$r] . '"><input type="hidden" name="attr_wh_name[]" value="' . $_POST['attr_wh_name'][$r] . '"><span>' . $_POST['attr_wh_name'][$r] . '</span></td><td class="quantity text-center"><input type="hidden" name="attr_quantity[]" value="' . $this->sma->formatQuantityDecimal($_POST['attr_quantity'][$r]) . '"><span>' . $this->sma->formatQuantity($_POST['attr_quantity'][$r]) . '</span></td><td class="price text-right"><input type="hidden" name="attr_price[]" value="' . $_POST['attr_price'][$r] . '"><span>' . $_POST['attr_price'][$r] . '</span></span></td><td class="text-center"><i class="fa fa-times delAttr"></i></td></tr>';
-                                            }
-                                        }
-                                    } elseif ($product_options) {
-                                        foreach ($product_options as $option) {
-                                            echo '<tr class="attr"><td><input type="hidden" name="attr_name[]" value="' . $option->name . '"><span>' . $option->name . '</span></td><td class="code text-center"><input type="hidden" name="attr_warehouse[]" value="' . $option->warehouse_id . '"><input type="hidden" name="attr_wh_name[]" value="' . $option->wh_name . '"><span>' . $option->wh_name . '</span></td><td class="quantity text-center"><input type="hidden" name="attr_quantity[]" value="' . $this->sma->formatQuantityDecimal($option->wh_qty) . '"><span>' . $this->sma->formatQuantity($option->wh_qty) . '</span></td><td class="price text-right"><input type="hidden" name="attr_price[]" value="' . $this->sma->formatMoney($option->price) . '"><span>' . $this->sma->formatMoney($option->price) . '</span></span></td><td class="text-center"><i class="fa fa-times delAttr"></i></td></tr>';
-                                        }
-                                    }
-                                    ?></tbody>
-                                </table>
-                            </div>
                         </div>
                         <div class="clearfix"></div>
-
-                        <div class="<?= $product ? 'text-warning' : '' ?>">
-                            <strong><?= lang("warehouse_quantity") ?></strong><br>
-                            <?php
-                            if (!empty($warehouses)) {
-                                if ($product) {
-                                    echo '<div class="row"><div class="col-md-12"><div class="well"><div id="show_wh_edit">';
-                                    if (!empty($warehouses_products)) {
-                                        echo '<div style="display:none;">';
-                                        foreach ($warehouses_products as $wh_pr) {
-                                            echo '<span class="bold text-info">' . $wh_pr->name . ': <span class="padding05" id="rwh_qty_' . $wh_pr->id . '">' . $this->sma->formatQuantity($wh_pr->quantity) . '</span>' . ($wh_pr->rack ? ' (<span class="padding05" id="rrack_' . $wh_pr->id . '">' . $wh_pr->rack . '</span>)' : '') . '</span><br>';
-                                        }
-                                        echo '</div>';
-                                    }
-                                    foreach ($warehouses as $warehouse) {
-                                        //$whs[$warehouse->id] = $warehouse->name;
-                                        echo '<div class="col-md-6 col-sm-6 col-xs-6" style="padding-bottom:15px;">' . $warehouse->name . '<br><div class="form-group">' . form_hidden('wh_' . $warehouse->id, $warehouse->id) . form_input('wh_qty_' . $warehouse->id, (isset($_POST['wh_qty_' . $warehouse->id]) ? $_POST['wh_qty_' . $warehouse->id] : (isset($warehouse->quantity) ? $warehouse->quantity : '')), 'class="form-control wh" id="wh_qty_' . $warehouse->id . '" placeholder="' . lang('quantity') . '"') . '</div>';
-                                        if ($Settings->racks) {
-                                            echo '<div class="form-group">' . form_input('rack_' . $warehouse->id, (isset($_POST['rack_' . $warehouse->id]) ? $_POST['rack_' . $warehouse->id] : (isset($warehouse->rack) ? $warehouse->rack : '')), 'class="form-control wh" id="rack_' . $warehouse->id . '" placeholder="' . lang('rack') . '"') . '</div>';
-                                        }
-                                        echo '</div>';
-                                    }
-                                    echo '</div><div class="clearfix"></div></div></div></div>';
-                                } else {
-                                    echo '<div class="row"><div class="col-md-12"><div class="well">';
-                                    foreach ($warehouses as $warehouse) {
-                                        //$whs[$warehouse->id] = $warehouse->name;
-                                        echo '<div class="col-md-6 col-sm-6 col-xs-6" style="padding-bottom:15px;">' . $warehouse->name . '<br><div class="form-group">' . form_hidden('wh_' . $warehouse->id, $warehouse->id) . form_input('wh_qty_' . $warehouse->id, (isset($_POST['wh_qty_' . $warehouse->id]) ? $_POST['wh_qty_' . $warehouse->id] : ''), 'class="form-control" id="wh_qty_' . $warehouse->id . '" placeholder="' . lang('quantity') . '"') . '</div>';
-                                        if ($Settings->racks) {
-                                            echo '<div class="form-group">' . form_input('rack_' . $warehouse->id, (isset($_POST['rack_' . $warehouse->id]) ? $_POST['rack_' . $warehouse->id] : ''), 'class="form-control" id="rack_' . $warehouse->id . '" placeholder="' . lang('rack') . '"') . '</div>';
-                                        }
-                                        echo '</div>';
-                                    }
-                                    echo '<div class="clearfix"></div></div></div></div>';
-                                }
-                            }
-                            ?>
-                        </div>
-                        <div class="clearfix"></div>
-
                     </div>
-                    <div class="combo" style="display:none;">
-
-                        <div class="form-group">
-                            <?= lang("add_product", "add_item") . ' (' . lang('not_with_variants') . ')'; ?>
-                            <?php echo form_input('add_item', '', 'class="form-control ttip" id="add_item" data-placement="top" data-trigger="focus" data-bv-notEmpty-message="' . lang('please_add_items_below') . '" placeholder="' . $this->lang->line("add_item") . '"'); ?>
-                        </div>
-                        <div class="control-group table-group">
-                            <label class="table-label" for="combo"><?= lang("combo_products"); ?></label>
-
-                            <div class="controls table-controls">
-                                <table id="prTable"
-                                       class="table items table-striped table-bordered table-condensed table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th class="col-md-5 col-sm-5 col-xs-5"><?= lang('product') . ' (' . lang('code') .' - '.lang('name') . ')'; ?></th>
-                                        <th class="col-md-2 col-sm-2 col-xs-2"><?= lang("quantity"); ?></th>
-                                        <th class="col-md-3 col-sm-3 col-xs-3"><?= lang("unit_price"); ?></th>
-                                        <th class="col-md-1 col-sm-1 col-xs-1 text-center">
-                                            <i class="fa fa-trash-o" style="opacity:0.5; filter:alpha(opacity=50);"></i>
-                                        </th>
-                                    </tr>
-                                    </thead>
-                                    <tbody></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="digital" style="display:none;">
-                        <div class="form-group digital">
-                            <?= lang("digital_file", "digital_file") ?>
-                            <input id="digital_file" type="file" data-browse-label="<?= lang('browse'); ?>" name="digital_file" data-show-upload="false"
-                                   data-show-preview="false" class="form-control file">
-                        </div>
-                        <div class="form-group">
-                            <?= lang('file_link', 'file_link'); ?>
-                            <?= form_input('file_link', set_value('file_link'), 'class="form-control" id="file_link"'); ?>
-                        </div>
-                    </div>
-
-                <div class="form-group standard">
-                    <div class="form-group">
-                        <?= lang("supplier", "supplier") ?>
-                        <button type="button" class="btn btn-primary btn-xs" id="addSupplier"><i class="fa fa-plus"></i>
-                        </button>
-                    </div>
-                    <div class="row" id="supplier-con">
-                        <div class="col-xs-12">
-                            <div class="form-group">
-                                <?php
-                                echo form_input('supplier', (isset($_POST['supplier']) ? $_POST['supplier'] : ''), 'class="form-control ' . ($product ? '' : 'suppliers') . '" id="' . ($product && ! empty($product->supplier1) ? 'supplier1' : 'supplier') . '" placeholder="' . lang("select") . ' ' . lang("supplier") . '" style="width:100%;"');
-                                ?>
-                            </div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-group">
-                                <?= form_input('supplier_part_no', (isset($_POST['supplier_part_no']) ? $_POST['supplier_part_no'] : ""), 'class="form-control tip" id="supplier_part_no" placeholder="' . lang('supplier_part_no') . '"'); ?>
-                            </div>
-                        </div>
-                        <div class="col-xs-6">
-                            <div class="form-group">
-                            <?= form_input('supplier_price', (isset($_POST['supplier_price']) ? $_POST['supplier_price'] : ""), 'class="form-control tip" id="supplier_price" placeholder="' . lang('supplier_price') . '"'); ?>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="ex-suppliers"></div>
-                </div>
-
                 </div>
 
                 <div class="col-md-12">
-                    <div class="form-group">
-                        <input name="featured" type="checkbox" class="checkbox" id="featured" value="1" <?= isset($_POST['featured']) ? 'checked="checked"' : '' ?>/>
-                        <label for="featured" class="padding05"><?= lang('featured') ?></label>
-                    </div>
-                    <div class="form-group">
-                        <input name="hide_pos" type="checkbox" class="checkbox" id="hide_pos" value="1" <?= isset($_POST['hide_pos']) ? 'checked="checked"' : '' ?>/>
-                        <label for="hide_pos" class="padding05"><?= lang('hide_in_pos') ?></label>
-                    </div>
-                    <div class="form-group">
-                        <input name="hide" type="checkbox" class="checkbox" id="hide" value="1" <?= isset($_POST['hide']) ? 'checked="checked"' : '' ?>/>
-                        <label for="hide" class="padding05"><?= lang('hide_in_shop') ?></label>
-                    </div>
-
-                    <div class="form-group">
-                        <input name="cf" type="checkbox" class="checkbox" id="extras" value="" <?= isset($_POST['cf']) ? 'checked="checked"' : '' ?>/>
-                        <label for="extras" class="padding05"><?= lang('custom_fields') ?></label>
-                    </div>
-                    <div class="row" id="extras-con" style="display: none;">
-
-                        <div class="col-md-4">
-                            <div class="form-group all">
-                                <?= lang('pcf1', 'cf1') ?>
-                                <?= form_input('cf1', (isset($_POST['cf1']) ? $_POST['cf1'] : ($product ? $product->cf1 : '')), 'class="form-control tip" id="cf1"') ?>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group all">
-                                <?= lang('pcf2', 'cf2') ?>
-                                <?= form_input('cf2', (isset($_POST['cf2']) ? $_POST['cf2'] : ($product ? $product->cf2 : '')), 'class="form-control tip" id="cf2"') ?>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group all">
-                                <?= lang('pcf3', 'cf3') ?>
-                                <?= form_input('cf3', (isset($_POST['cf3']) ? $_POST['cf3'] : ($product ? $product->cf3 : '')), 'class="form-control tip" id="cf3"') ?>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group all">
-                                <?= lang('pcf4', 'cf4') ?>
-                                <?= form_input('cf4', (isset($_POST['cf4']) ? $_POST['cf4'] : ($product ? $product->cf4 : '')), 'class="form-control tip" id="cf4"') ?>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group all">
-                                <?= lang('pcf5', 'cf5') ?>
-                                <?= form_input('cf5', (isset($_POST['cf5']) ? $_POST['cf5'] : ($product ? $product->cf5 : '')), 'class="form-control tip" id="cf5"') ?>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group all">
-                                <?= lang('pcf6', 'cf6') ?>
-                                <?= form_input('cf6', (isset($_POST['cf6']) ? $_POST['cf6'] : ($product ? $product->cf6 : '')), 'class="form-control tip" id="cf6"') ?>
-                            </div>
-                        </div>
-
-                    </div>
-
                     <div class="form-group all">
                         <?= lang("product_details", "product_details") ?>
                         <?= form_textarea('product_details', (isset($_POST['product_details']) ? $_POST['product_details'] : ($product ? $product->product_details : '')), 'class="form-control" id="details"'); ?>
                     </div>
-                    <div class="form-group all">
-                        <?= lang("product_details_for_invoice", "details") ?>
-                        <?= form_textarea('details', (isset($_POST['details']) ? $_POST['details'] : ($product ? $product->details : '')), 'class="form-control" id="details"'); ?>
-                    </div>
-
                     <div class="form-group">
                         <?php echo form_submit('add_product', $this->lang->line("add_product"), 'class="btn btn-primary"'); ?>
                     </div>
@@ -562,8 +264,8 @@ if (!empty($variants)) {
             var t = $(this).val();
             if (t !== 'standard') {
                 $('.standard').slideUp();
-                $('#unit').attr('disabled', true);
-                $('#cost').attr('disabled', true);
+                // $('#unit').attr('disabled', true);
+                // $('#cost').attr('disabled', true);
                 $('#track_quantity').iCheck('uncheck');
             } else {
                 $('.standard').slideDown();
@@ -595,8 +297,8 @@ if (!empty($variants)) {
         var t = $('#type').val();
         if (t !== 'standard') {
             $('.standard').slideUp();
-            $('#unit').attr('disabled', true);
-            $('#cost').attr('disabled', true);
+            // $('#unit').attr('disabled', true);
+            // $('#cost').attr('disabled', true);
             $('#track_quantity').iCheck('uncheck');
         } else {
             $('.standard').slideDown();

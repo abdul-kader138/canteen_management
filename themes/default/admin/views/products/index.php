@@ -14,6 +14,14 @@
     <?php } ?>
 </style>
 <script>
+
+    function id_conversion(x) {
+        if (x == null) {
+            return '';
+        }  else {
+            return x.toUpperCase();
+        }
+    }
     var oTable;
     $(document).ready(function () {
         oTable = $('#PRData').dataTable({
@@ -37,27 +45,26 @@
                 return nRow;
             },
             "aoColumns": [
-                {"bSortable": false, "mRender": checkbox}, {"bSortable": false,"mRender": img_hl}, null, null, null, null, <?php if($Owner || $Admin) { echo '{"mRender": currencyFormat}, {"mRender": currencyFormat},'; } else { if($this->session->userdata('show_cost')) { echo '{"mRender": currencyFormat},';  } if($this->session->userdata('show_price')) { echo '{"mRender": currencyFormat},';  } } ?> {"mRender": formatQuantity}, null, <?php if(!$warehouse_id || !$Settings->racks) { echo '{"bVisible": false},'; } else { echo '{"bSortable": true},'; } ?> {"mRender": formatQuantity}, {"bSortable": false}
+                {"bSortable": false, "mRender": checkbox}, {"bSortable": false,"mRender": img_hl}, null, null, null, <?php if($Owner || $Admin) { echo '{"mRender": currencyFormat}, {"mRender": currencyFormat},'; } else { if($this->session->userdata('show_cost')) { echo '{"mRender": currencyFormat},';  } if($this->session->userdata('show_price')) { echo '{"mRender": currencyFormat},';  } } ?> {"mRender": formatQuantity}, null, <?php if(!$warehouse_id || !$Settings->racks) { echo '{"bVisible": false},'; } else { echo '{"bSortable": true},'; } ?> {"mRender": id_conversion}, {"bSortable": false}
             ]
         }).fnSetFilteringDelay().dtFilter([
             {column_number: 2, filter_default_label: "[<?=lang('code');?>]", filter_type: "text", data: []},
             {column_number: 3, filter_default_label: "[<?=lang('name');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('brand');?>]", filter_type: "text", data: []},
-            {column_number: 5, filter_default_label: "[<?=lang('category');?>]", filter_type: "text", data: []},
-            <?php $col = 5;
+            {column_number: 4, filter_default_label: "[<?=lang('category');?>]", filter_type: "text", data: []},
+            <?php $col = 4;
             if($Owner || $Admin) {
-                echo '{column_number : 6, filter_default_label: "['.lang('cost').']", filter_type: "text", data: [] },';
-                echo '{column_number : 7, filter_default_label: "['.lang('price').']", filter_type: "text", data: [] },';
+                echo '{column_number : 5, filter_default_label: "['.lang('cost').']", filter_type: "text", data: [] },';
+                echo '{column_number : 6, filter_default_label: "['.lang('price').']", filter_type: "text", data: [] },';
                 $col += 2;
             } else {
                 if($this->session->userdata('show_cost')) { $col++; echo '{column_number : '.$col.', filter_default_label: "['.lang('cost').']", filter_type: "text", data: [] },'; }
                 if($this->session->userdata('show_price')) { $col++; echo '{column_number : '.$col.', filter_default_label: "['.lang('price').']", filter_type: "text, data: []" },'; }
             }
             ?>
-            {column_number: <?php $col++; echo $col; ?>, filter_default_label: "[<?=lang('quantity');?>]", filter_type: "text", data: []},
+            {column_number: <?php $col++; echo $col; ?>, filter_default_label: "[<?=lang('Discount_Amount');?>]", filter_type: "text", data: []},
             {column_number: <?php $col++; echo $col; ?>, filter_default_label: "[<?=lang('unit');?>]", filter_type: "text", data: []},
             <?php $col++; if($warehouse_id && $Settings->racks) { echo '{column_number : '. $col.', filter_default_label: "['.lang('rack').']", filter_type: "text", data: [] },'; } ?>
-            {column_number: <?php $col++; echo $col; ?>, filter_default_label: "[<?=lang('alert_quantity');?>]", filter_type: "text", data: []},
+            {column_number: <?php $col++; echo $col; ?>, filter_default_label: "[<?=lang('Product_Type');?>]", filter_type: "text", data: []},
         ], "footer");
 
     });
@@ -147,7 +154,6 @@
                             <th style="min-width:40px; width: 40px; text-align: center;"><?php echo $this->lang->line("image"); ?></th>
                             <th><?= lang("code") ?></th>
                             <th><?= lang("name") ?></th>
-                            <th><?= lang("brand") ?></th>
                             <th><?= lang("category") ?></th>
                             <?php
                             if ($Owner || $Admin) {
@@ -162,10 +168,10 @@
                                 }
                             }
                             ?>
-                            <th><?= lang("quantity") ?></th>
+                            <th><?= lang("Discount_Amount") ?></th>
                             <th><?= lang("unit") ?></th>
                             <th><?= lang("rack") ?></th>
-                            <th><?= lang("alert_quantity") ?></th>
+                            <th><?= lang("Product_Type") ?></th>
                             <th style="min-width:65px; text-align:center;"><?= lang("actions") ?></th>
                         </tr>
                         </thead>
@@ -181,7 +187,6 @@
                                 <input class="checkbox checkft" type="checkbox" name="check"/>
                             </th>
                             <th style="min-width:40px; width: 40px; text-align: center;"><?php echo $this->lang->line("image"); ?></th>
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>

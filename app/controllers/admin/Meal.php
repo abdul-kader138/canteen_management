@@ -185,12 +185,17 @@ class Meal extends MY_Controller
 
         $this->form_validation->set_rules('note', $this->lang->line("note"), 'trim');
         if ($this->form_validation->run() == true) {
+            $current_user=$this->meal_model->getUserByID($this->session->userdata('user_id'));
             $i = isset($_POST['orderDate']) ? sizeof($_POST['orderDate']) : 0;
             for ($r = 0; $r < $i; $r++) {
                 $order_date = isset($_POST['orderDate'][$r]) ? $this->sma->fsd($_POST['orderDate'][$r]) : null;
                 $menu_id = $_POST['menu_id'][$r];
                 $order_qty = $_POST['menu_quantity'][$r];
                 $info = $this->meal_model->getTodayMenuByID($menu_id);
+                $discount_amounts=0;
+                if($current_user->allow_discount == 1){
+                    $discount_amounts=(($info->product_price * $current_user->discount) /100);
+                }
                 $product = array(
                     'title' => $info->title,
                     'order_date' => $order_date,
@@ -202,7 +207,7 @@ class Meal extends MY_Controller
                     'product_id' => $info->product_id,
                     'product_name' => $info->product_name,
                     'product_price' => $info->product_price,
-                    'discount_amount' => $info->discount_amount,
+                    'discount_amount' => ($info->discount_amount+$discount_amounts),
                     'status' => 'Order',
                     'note' => $this->sma->clear_tags($this->input->post('note')),
                     'qty' => 1
@@ -268,6 +273,11 @@ class Meal extends MY_Controller
             $menu_id = $this->input->post('menu_name');
             $order_qty = $this->input->post('order_quantity');
             $info = $this->meal_model->getTodayMenuByID($menu_id);
+            $current_user=$this->meal_model->getUserByID($this->session->userdata('user_id'));
+            $discount_amounts=0;
+            if($current_user->allow_discount == 1){
+                $discount_amounts=(($info->product_price * $current_user->discount) /100);
+            }
             $product = array(
                 'title' => $info->title,
                 'order_date' => $order_details->order_date,
@@ -279,7 +289,7 @@ class Meal extends MY_Controller
                 'product_id' => $info->product_id,
                 'product_name' => $info->product_name,
                 'product_price' => $info->product_price,
-                'discount_amount' => $info->discount_amount,
+                'discount_amount' => ($info->discount_amount+$discount_amounts),
                 'status' => 'Order',
                 'note' => $this->sma->clear_tags($this->input->post('note')),
                 'qty' => 1
