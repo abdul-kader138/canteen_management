@@ -28,6 +28,10 @@ class Reports_model extends CI_Model
         if ($this->Admin) {
             $this->db->where('group_id !=', 1);
         }
+
+        if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $this->db->where('id', $this->session->userdata('user_id'));
+        }
         $this->db->where('group_id !=', 3)->where('group_id !=', 4);
         $q = $this->db->get('users');
         if ($q->num_rows() > 0) {
@@ -71,6 +75,8 @@ class Reports_model extends CI_Model
 
     public function getStockValue()
     {
+
+
         $q = $this->db->query("SELECT SUM(by_price) as stock_by_price, SUM(by_cost) as stock_by_cost FROM ( Select COALESCE(sum(" . $this->db->dbprefix('warehouses_products') . ".quantity), 0)*price as by_price, COALESCE(sum(" . $this->db->dbprefix('warehouses_products') . ".quantity), 0)*cost as by_cost FROM " . $this->db->dbprefix('products') . " JOIN " . $this->db->dbprefix('warehouses_products') . " ON " . $this->db->dbprefix('warehouses_products') . ".product_id=" . $this->db->dbprefix('products') . ".id GROUP BY " . $this->db->dbprefix('products') . ".id )a");
         if ($q->num_rows() > 0) {
             return $q->row();

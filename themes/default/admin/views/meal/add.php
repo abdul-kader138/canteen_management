@@ -9,7 +9,7 @@
                 <p class="introtext"><?php echo lang('enter_info'); ?></p>
                 <?php
                 $attrib = array('data-toggle' => 'validator', 'id'=>'addMeal', 'name'=>'addMeal', 'role' => 'form');
-                echo admin_form_open("meal/add", $attrib)
+                echo admin_form_open("meal/food_order", $attrib)
                 ?>
                 <div class="row">
                     <div class="col-lg-12" id="sticker">

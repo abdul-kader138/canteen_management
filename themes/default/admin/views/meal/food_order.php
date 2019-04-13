@@ -7,7 +7,7 @@
             <h4 class="modal-title" id="myModalLabel"><?php echo lang('Food_Order'); ?></h4>
         </div>
         <?php $attrib = array('data-toggle' => 'validator', 'role' => 'form');
-        echo admin_form_open_multipart("meal/food_order/" . $inv->id, $attrib); ?>
+        echo admin_form_open_multipart("meal/food_orders/" . $inv->id, $attrib); ?>
         <div class="modal-body">
             <p><?= lang('enter_info'); ?></p>
             <div class="panel panel-default">

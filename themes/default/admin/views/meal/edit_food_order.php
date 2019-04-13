@@ -60,7 +60,7 @@
                 <div class="col-md-12">
                     <div class="form-group">
                         <?= lang("note", "note"); ?>
-                        <?php echo form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : $this->sma->decode_html($inv->note)), 'class="form-control" id="note"'); ?>
+                        <?php echo form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : $this->sma->decode_html($order->note)), 'class="form-control" id="note"'); ?>
                     </div>
                 </div>
             </div>

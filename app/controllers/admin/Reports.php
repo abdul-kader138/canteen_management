@@ -3219,7 +3219,7 @@ class Reports extends MY_Controller
     {
         if (!$this->Owner && !$this->Admin) {
             $get_permission = $this->permission_details[0];
-            if ((!$get_permission['meal-food_order'])) {
+            if ((!$get_permission['reports-order_transaction_report'])) {
                 $this->session->set_flashdata('warning', lang('access_denied'));
                 die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
                 redirect($_SERVER["HTTP_REFERER"]);
@@ -3238,7 +3238,7 @@ class Reports extends MY_Controller
     {
         if (!$this->Owner && !$this->Admin) {
             $get_permission = $this->permission_details[0];
-            if ((!$get_permission['meal-food_order'])) {
+            if ((!$get_permission['reports-order_transaction_report'])) {
                 $this->session->set_flashdata('warning', lang('access_denied'));
                 die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
                 redirect($_SERVER["HTTP_REFERER"]);
@@ -3246,16 +3246,6 @@ class Reports extends MY_Controller
         }
 
         $user = $this->input->get('user') ? $this->input->get('user') : NULL;
-        $supplier = $this->input->get('supplier') ? $this->input->get('supplier') : NULL;
-        $customer = $this->input->get('customer') ? $this->input->get('customer') : NULL;
-        $biller = $this->input->get('biller') ? $this->input->get('biller') : NULL;
-        $payment_ref = $this->input->get('payment_ref') ? $this->input->get('payment_ref') : NULL;
-        $paid_by = $this->input->get('paid_by') ? $this->input->get('paid_by') : NULL;
-        $sale_ref = $this->input->get('sale_ref') ? $this->input->get('sale_ref') : NULL;
-        $purchase_ref = $this->input->get('purchase_ref') ? $this->input->get('purchase_ref') : NULL;
-        $card = $this->input->get('card') ? $this->input->get('card') : NULL;
-        $cheque = $this->input->get('cheque') ? $this->input->get('cheque') : NULL;
-        $transaction_id = $this->input->get('tid') ? $this->input->get('tid') : NULL;
         $start_date = $this->input->get('start_date') ? $this->input->get('start_date') : NULL;
         $end_date = $this->input->get('end_date') ? $this->input->get('end_date') : NULL;
 
@@ -3278,39 +3268,6 @@ class Reports extends MY_Controller
 
             if ($user) {
                 $this->db->where('payments.created_by', $user);
-            }
-            if ($card) {
-                $this->db->like('payments.cc_no', $card, 'both');
-            }
-            if ($cheque) {
-                $this->db->where('payments.cheque_no', $cheque);
-            }
-            if ($transaction_id) {
-                $this->db->where('payments.transaction_id', $transaction_id);
-            }
-            if ($customer) {
-                $this->db->where('sales.customer_id', $customer);
-            }
-            if ($supplier) {
-                $this->db->where('purchases.supplier_id', $supplier);
-            }
-            if ($biller) {
-                $this->db->where('sales.biller_id', $biller);
-            }
-            if ($customer) {
-                $this->db->where('sales.customer_id', $customer);
-            }
-            if ($payment_ref) {
-                $this->db->like('payments.reference_no', $payment_ref, 'both');
-            }
-            if ($paid_by) {
-                $this->db->where('payments.paid_by', $paid_by);
-            }
-            if ($sale_ref) {
-                $this->db->like('sales.reference_no', $sale_ref, 'both');
-            }
-            if ($purchase_ref) {
-                $this->db->like('purchases.reference_no', $purchase_ref, 'both');
             }
             if ($start_date) {
                 $this->db->where($this->db->dbprefix('payments') . '.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
@@ -3402,5 +3359,145 @@ class Reports extends MY_Controller
 //         $tt = "( SELECT pp.user_id, pi.username, concat(pi.first_name,' ',pi.last_name) as full_name,pi.last_name,pp.description,SUM( pp.qty ) qty, SUM( pp.product_price ) product_price, SUM( pp.discount_amount ) discount_amount from sma_food_order_details pp inner JOIN sma_users pi ON pp.user_id = pi.id group by user_id order by order_date asc, first_name asc, description desc )";
     }
 
+
+    function order_summary_report()
+    {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['reports-order_summary_report'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        }
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        $this->data['users'] = $this->reports_model->getStaff();
+        $this->data['billers'] = $this->site->getAllCompanies('biller');
+        $this->data['pos_settings'] = POS ? $this->reports_model->getPOSSetting('biller') : FALSE;
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('Order_Details_Report')));
+        $meta = array('page_title' => lang('Order_Details_Report'), 'bc' => $bc);
+        $this->page_construct('reports/order_summary_report', $meta, $this->data);
+    }
+
+
+    function getOrderSummaryReport($pdf = NULL, $xls = NULL)
+    {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['reports-order_summary_report'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        }
+
+        $user = $this->input->get('user') ? $this->input->get('user') : NULL;
+        $start_date = $this->input->get('start_date') ? $this->input->get('start_date') : NULL;
+        $end_date = $this->input->get('end_date') ? $this->input->get('end_date') : NULL;
+
+        if ($start_date) {
+            $start_date = $this->sma->fsd($start_date);
+            $end_date = $this->sma->fsd($end_date);
+        }
+        if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $user = $this->session->userdata('user_id');
+        }
+        if ($pdf || $xls) {
+
+            $this->db
+                ->select("" . $this->db->dbprefix('food_order_details') . ".order_date, " . $this->db->dbprefix('food_order_details') . ".title as payment_ref, " . $this->db->dbprefix('food_order_details') . ".product_name as sale_ref, " . $this->db->dbprefix('purchases') . ".reference_no as purchase_ref, paid_by, amount, type")
+                ->from('food_order_details')
+                ->group_by('food_order_details.user_id,food_order_details.order_date,food_order_details.product_name')
+                ->order_by('food_order_details.order_date asc');
+
+            if ($user) {
+                $this->db->where('payments.created_by', $user);
+            }
+            if ($start_date) {
+                $this->db->where($this->db->dbprefix('payments') . '.date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+            }
+
+            $q = $this->db->get();
+            if ($q->num_rows() > 0) {
+                foreach (($q->result()) as $row) {
+                    $data[] = $row;
+                }
+            } else {
+                $data = NULL;
+            }
+
+            if (!empty($data)) {
+                $this->load->library('excel');
+                $this->excel->setActiveSheetIndex(0);
+                $this->excel->getActiveSheet()->setTitle(lang('payments_report'));
+                $this->excel->getActiveSheet()->SetCellValue('A1', lang('date'));
+                $this->excel->getActiveSheet()->SetCellValue('B1', lang('payment_reference'));
+                $this->excel->getActiveSheet()->SetCellValue('C1', lang('sale_reference'));
+                $this->excel->getActiveSheet()->SetCellValue('D1', lang('purchase_reference'));
+                $this->excel->getActiveSheet()->SetCellValue('E1', lang('paid_by'));
+                $this->excel->getActiveSheet()->SetCellValue('F1', lang('amount'));
+                $this->excel->getActiveSheet()->SetCellValue('G1', lang('type'));
+                $row = 2;
+                $total = 0;
+                foreach ($data as $data_row) {
+                    $this->excel->getActiveSheet()->SetCellValue('A' . $row, $this->sma->hrld($data_row->date));
+                    $this->excel->getActiveSheet()->SetCellValue('B' . $row, $data_row->payment_ref);
+                    $this->excel->getActiveSheet()->SetCellValue('C' . $row, $data_row->sale_ref);
+                    $this->excel->getActiveSheet()->SetCellValue('D' . $row, $data_row->purchase_ref);
+                    $this->excel->getActiveSheet()->SetCellValue('E' . $row, lang($data_row->paid_by));
+                    $this->excel->getActiveSheet()->SetCellValue('F' . $row, $data_row->amount);
+                    $this->excel->getActiveSheet()->SetCellValue('G' . $row, $data_row->type);
+                    if ($data_row->type == 'returned' || $data_row->type == 'sent') {
+                        $total -= $data_row->amount;
+                    } else {
+                        $total += $data_row->amount;
+                    }
+                    $row++;
+                }
+                $this->excel->getActiveSheet()->getStyle("F" . $row)->getBorders()
+                    ->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_MEDIUM);
+                $this->excel->getActiveSheet()->SetCellValue('F' . $row, $total);
+                $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+                $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(25);
+                $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(25);
+                $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(25);
+                $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(15);
+                $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(15);
+                $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(15);
+                $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+                $filename = 'payments_report';
+                $this->load->helper('excel');
+                create_excel($this->excel, $filename);
+
+            }
+            $this->session->set_flashdata('error', lang('nothing_found'));
+            redirect($_SERVER["HTTP_REFERER"]);
+        } else {
+            $pp = "( SELECT pp.user_id, pi.username, concat(pi.first_name,' ',pi.last_name) as full_name,pi.last_name,pp.description,SUM( pp.qty ) qty, SUM( pp.product_price ) product_price, SUM( pp.discount_amount ) discount_amount from {$this->db->dbprefix('food_order_details')}  pp inner JOIN " . $this->db->dbprefix('users') . " pi ON pp.user_id = pi.id where pp.description='Own' ";
+            $tt = "( SELECT tt.user_id, ti.username, concat(ti.first_name,' ',ti.last_name) as full_name,ti.last_name,tt.description,SUM( tt.qty ) qty, SUM( tt.product_price ) product_price, SUM( tt.discount_amount ) discount_amount from {$this->db->dbprefix('food_order_details')}  tt inner JOIN " . $this->db->dbprefix('users') . " ti ON tt.user_id = ti.id where tt.description='Guest' ";
+
+            if ($start_date) {
+                $pp .= " and ";
+                $tt .= " and ";
+                $pp .= " pp.order_date >= '{$start_date}' AND pp.order_date <= '{$end_date}' ";
+                $tt .= " tt.order_date >= '{$start_date}' AND tt.order_date <= '{$end_date}' ";
+            }
+            $pp .= " group by user_id order by order_date asc, first_name asc, description desc ) POrderOwn";
+            $tt .= " group by user_id order by order_date asc, first_name asc, description desc ) POrderGuest";
+            $this->load->library('datatables');
+            $this->datatables
+                ->select(" users.username as uname, POrderOwn.full_name,POrderOwn.qty as own_qty,(POrderOwn.product_price-POrderOwn.discount_amount) as own_g_total,POrderGuest.qty,(POrderGuest.product_price-POrderGuest.discount_amount) as guest_g_total, (POrderGuest.qty+POrderOwn.qty) as total_qtys,((POrderOwn.product_price-POrderOwn.discount_amount) +(POrderGuest.product_price-POrderGuest.discount_amount)) as g_toatals")
+                ->from('users')
+                ->join($pp, 'POrderOwn.user_id=users.id', 'inner')
+                ->join($tt, 'POrderGuest.user_id=users.id', 'inner');
+
+            if ($user) {
+                $this->datatables->where('id', $user);
+            }
+            echo $this->datatables->generate();
+
+        }
+
+    }
 
 }

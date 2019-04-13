@@ -23,7 +23,7 @@ class Meal extends MY_Controller
         $this->load->admin_model('meal_model');
     }
 
-    public function food_order($id)
+    public function food_orders($id)
     {
         if (!$this->Owner && !$this->Admin) {
             $get_permission = $this->permission_details[0];
@@ -146,14 +146,6 @@ class Meal extends MY_Controller
     function getMenus($date = NULL)
     {
         // $this->sma->checkPermissions('index');
-        $s_date = $this->sma->fld($this->input->get('date'));
-        $row = $this->meal_model->getMenusByDate($s_date);
-        $this->sma->send_json($row);
-    }
-
-
-    function checkDuplicateOrder($date = NULL)
-    {
         $row = true;
         $s_date = $this->sma->fld($this->input->get('date'));
         if (trim($s_date) == date("Y-m-d")) {
@@ -162,12 +154,25 @@ class Meal extends MY_Controller
             $time = strtotime($current_time);
             if ($fixed_time < $time) $row = false;
         }
-        if ($row) $row = $this->meal_model->getOrderByDate($s_date);
+        if ($row) $row = $this->meal_model->getMenusByDate($s_date);
+        $this->sma->send_json($row);
+
+
+//        $s_date = $this->sma->fld($this->input->get('date'));
+//        $row = $this->meal_model->getMenusByDate($s_date);
+//        $this->sma->send_json($row);
+    }
+
+
+    function checkDuplicateOrder($date = NULL)
+    {
+        $s_date = $this->sma->fld($this->input->get('date'));
+        $row = $this->meal_model->getOrderByDate($s_date);
         $this->sma->send_json($row);
     }
 
 
-    public function add()
+    public function food_order()
     {
         if (!$this->Owner && !$this->Admin) {
             $get_permission = $this->permission_details[0];

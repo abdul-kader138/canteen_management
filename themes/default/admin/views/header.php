@@ -727,8 +727,8 @@
                                                     </a>
 
                                                 </li>
-                                                <li id="meal_add">
-                                                    <a class="submenu" href="<?= admin_url('meal/add'); ?>">
+                                                <li id="meal_food_Order">
+                                                    <a class="submenu" href="<?= admin_url('meal/food_order'); ?>">
                                                         <i class="fa fa-plus"></i>
                                                         <span class="text"> <?= lang('Food_Order'); ?></span>
                                                     </a>
@@ -761,6 +761,12 @@
                                                     <a href="<?= admin_url('reports/order_transaction_report') ?>">
                                                         <i class="fa fa-history"></i><span
                                                                 class="text"> <?= lang('Order_Details_Report'); ?></span>
+                                                    </a>
+                                                </li>
+                                                <li id="reports_order_summary_report">
+                                                    <a href="<?= admin_url('reports/order_summary_report') ?>">
+                                                        <i class="fa fa-history"></i><span
+                                                                class="text"> <?= lang('Order_Summary_Report'); ?></span>
                                                     </a>
                                                 </li>
                                                 <li id="reports_best_sellers">
@@ -1249,7 +1255,7 @@
                                         <?php } ?>
 
                                         <?php if ($GP['calendar-index']) { ?>
-                                            <li class="dropdown-footer">
+                                            <li class="calendar_index">
                                                 <a href="<?= admin_url('calendar') ?>" class="btn-block link">
                                                     <i class="fa fa-calendar"></i> <?= lang('Menu_Calendar') ?>
                                                 </a>
@@ -1261,7 +1267,8 @@
                                                 <a class="dropmenu" href="#">
                                                     <i class="fa fa-history"></i>
                                                     <span class="text"> <?= lang('Food_Order_Details'); ?>
-                                    </span> <span class="chevron closed"></span>
+                                    </span>
+                                                    <span class="chevron closed"></span>
                                                 </a>
                                                 <ul>
                                                     <li id="meal_index">
@@ -1272,8 +1279,9 @@
                                                     </li>
 
                                                     <?php if ($GP['meal-food_order']) { ?>
-                                                        <li id="meal-add">
-                                                            <a class="submenu" href="<?= admin_url('meal/add'); ?>">
+                                                        <li id="meal_food_order">
+                                                            <a class="submenu"
+                                                               href="<?= admin_url('meal/food_order'); ?>">
                                                                 <i class="fa fa-plus"></i>
                                                                 <span class="text"> <?= lang('Food_Order'); ?></span>
                                                             </a>
@@ -1295,6 +1303,14 @@
                                                             <a href="<?= admin_url('reports/order_transaction_report') ?>">
                                                                 <i class="fa fa-calendar-o"></i><span
                                                                         class="text"> <?= lang('Order_Details_report'); ?></span>
+                                                            </a>
+                                                        </li>
+                                                    <?php } ?>
+                                                    <?php if ($GP['reports-order_summary_report']) { ?>
+                                                        <li id="reports_order_summary_report">
+                                                            <a href="<?= admin_url('reports/order_summary_report') ?>">
+                                                                <i class="fa fa-calendar-o"></i><span
+                                                                        class="text"> <?= lang('Order_Summary_report'); ?></span>
                                                             </a>
                                                         </li>
                                                     <?php } ?>

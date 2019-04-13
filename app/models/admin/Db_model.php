@@ -203,4 +203,18 @@ class Db_model extends CI_Model
         }
         return FALSE;
     }
+
+    public function getAllMealTotals()
+    {
+        $this->db->select('sum(qty) as total_quantity,sum((product_price - discount_amount)) as total_price, sum(product_price) as price,sum(discount_amount) as d_price', FALSE);
+        if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $this->db->where('user_id', $this->session->userdata('user_id'));
+        }
+        $q = $this->db->get('food_order_details');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return FALSE;
+    }
+
 }

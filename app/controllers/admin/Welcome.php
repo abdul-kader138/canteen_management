@@ -37,6 +37,7 @@ class Welcome extends MY_Controller
         $this->data['chatData'] = $this->db_model->getChartData();
         $this->data['stock'] = $this->db_model->getStockValue();
         $this->data['bs'] = $this->db_model->getBestSeller();
+        $this->data['totals'] = $this->db_model->getAllMealTotals();
         $this->data['menus'] = $this->db_model->getEventByDate(date('Y-m-d'));
         $this->data['food_ordered'] = $this->db_model->getTodayOrderByDateAndID(date('Y-m-d'));
         $lmsdate = date('Y-m-d', strtotime('first day of last month')) . ' 00:00:00';

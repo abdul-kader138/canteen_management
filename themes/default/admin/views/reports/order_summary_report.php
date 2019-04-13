@@ -42,6 +42,14 @@ if ($this->input->post('end_date')) {
             }
         }
 
+        function name_status(x) {
+            if (x == null) {
+                return '';
+            } else {
+                return x.toUpperCase();
+            }
+        }
+
         function grand_status(x) {
             if (x == null) {
                 return '';
@@ -65,7 +73,7 @@ if ($this->input->post('end_date')) {
             "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],
             "iDisplayLength": <?= $Settings->rows_per_page ?>,
             'bProcessing': true, 'bServerSide': true,
-            'sAjaxSource': '<?= admin_url('reports/getOrderTransactionReport/?v=1' . $v) ?>',
+            'sAjaxSource': '<?= admin_url('reports/getOrderSummaryReport/?v=1' . $v) ?>',
             'fnServerData': function (sSource, aoData, fnCallback) {
                 aoData.push({
                     "name": "<?= $this->security->get_csrf_token_name() ?>",
@@ -73,37 +81,41 @@ if ($this->input->post('end_date')) {
                 });
                 $.ajax({'dataType': 'json', 'type': 'POST', 'url': sSource, 'data': aoData, 'success': fnCallback});
             },
-            "aoColumns": [{"mRender": fsd}, null, {"mRender": order_status}, null, null, null, {"mRender": price_status}, {"mRender": discount_status}, {"mRender": grand_status}],
+            "aoColumns": [{"mRender": name_status},null, null, {"mRender": price_status},null, {"mRender": price_status},null,{"mRender": grand_status}],
             'fnRowCallback': function (nRow, aData, iDisplayIndex) {
             },
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
+                var total_qty_own = 0;
+                var total_qty_guest = 0;
+                var total_price_own = 0;
+                var total_price_guest = 0;
                 var total_qty = 0;
-                var total_price = 0;
-                var total_dis = 0;
-                var total_g = 0;
+                var total_grand = 0;
                 for (var i = 0; i < aaData.length; i++) {
-                    total_qty += parseFloat(aaData[aiDisplay[i]][5]);
-                    total_price += parseFloat(aaData[aiDisplay[i]][6]);
-                    total_dis += parseFloat(aaData[aiDisplay[i]][7]);
-                    total_g += parseFloat(aaData[aiDisplay[i]][8]);
+                    total_qty_own += parseFloat(aaData[aiDisplay[i]][2]);
+                    total_qty_guest += parseFloat(aaData[aiDisplay[i]][3]);
+                    total_price_own += parseFloat(aaData[aiDisplay[i]][4]);
+                    total_price_guest += parseFloat(aaData[aiDisplay[i]][5]);
+                    total_qty += parseFloat(aaData[aiDisplay[i]][6]);
+                    total_grand += parseFloat(aaData[aiDisplay[i]][7]);
                 }
                 var nCells = nRow.getElementsByTagName('th');
-                nCells[5].innerHTML = '<b>' + parseFloat(total_qty) + '</b>';
-                nCells[6].innerHTML = '<b>' + parseFloat(total_price) + '</b>';
-                nCells[7].innerHTML = '<b>' + parseFloat(total_dis) + '</b>';
-                nCells[8].innerHTML = '<b>' + parseFloat(total_g) + '</b>';
+                nCells[2].innerHTML = '<b>' + parseFloat(total_qty_own) + '</b>';
+                nCells[3].innerHTML = '<b>' + parseFloat(total_qty_guest) + '</b>';
+                nCells[4].innerHTML = '<b>' + parseFloat(total_price_own) + '</b>';
+                nCells[5].innerHTML = '<b>' + parseFloat(total_price_guest) + '</b>';
+                nCells[6].innerHTML = '<b>' + parseFloat(total_qty) + '</b>';
+                nCells[7].innerHTML = '<b>' + parseFloat(total_grand) + '</b>';
             }
         }).fnSetFilteringDelay().dtFilter([
             {
                 column_number: 0,
-                filter_default_label: "[<?=lang('date');?> (dd/mm/yyyy)]",
+                filter_default_label: "[Emp_id]",
                 filter_type: "text",
                 data: []
             },
-            {column_number: 1, filter_default_label: "[<?=lang('Full_Name');?>]", filter_type: "text", data: []},
-            {column_number: 2, filter_default_label: "[<?=lang('Order_For');?>]", filter_type: "text", data: []},
-            {column_number: 3, filter_default_label: "[<?=lang('Menu_Type');?>]", filter_type: "text", data: []},
-            {column_number: 4, filter_default_label: "[<?=lang('Item');?>]", filter_type: "text", data: []},
+            {column_number: 1, filter_default_label: "[<?=lang('Name');?>]", filter_type: "text", data: []},
+
         ], "footer");
     });
 </script>
@@ -123,7 +135,7 @@ if ($this->input->post('end_date')) {
 
 <div class="box">
     <div class="box-header">
-        <h2 class="blue"><i class="fa-fw fa fa-money"></i><?= lang('Order_Details_Report'); ?> <?php
+        <h2 class="blue"><i class="fa-fw fa fa-money"></i><?= lang('Order_Summary_Report'); ?> <?php
             if ($this->input->post('start_date')) {
                 echo "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
             } ?>
@@ -166,7 +178,7 @@ if ($this->input->post('end_date')) {
 
                 <div id="form">
 
-                    <?php echo admin_form_open("reports/order_transaction_report"); ?>
+                    <?php echo admin_form_open("reports/order_summary_report"); ?>
                     <div class="row">
                         <div class="col-sm-4">
                             <div class="form-group">
@@ -195,7 +207,7 @@ if ($this->input->post('end_date')) {
                     </div>
                     <div class="form-group">
                         <div
-                                class="controls"> <?php echo form_submit('submit_report', $this->lang->line("submit"), 'class="btn btn-primary"'); ?> </div>
+                            class="controls"> <?php echo form_submit('submit_report', $this->lang->line("submit"), 'class="btn btn-primary"'); ?> </div>
                     </div>
                     <?php echo form_close(); ?>
 
@@ -209,25 +221,23 @@ if ($this->input->post('end_date')) {
 
                         <thead>
                         <tr>
-                            <th><?= lang("Order_Date"); ?></th>
-                            <th><?= lang("Full_Name"); ?></th>
-                            <th><?= lang("Order_For"); ?></th>
-                            <th><?= lang("Menu_Type"); ?></th>
-                            <th><?= lang("Item"); ?></th>
-                            <th><?= lang("Quantity"); ?></th>
+                            <th><?= lang("Emp_Id"); ?></th>
+                            <th><?= lang("Name"); ?></th>
+                            <th><?= lang("Qty(Own)"); ?></th>
                             <th><?= lang("Total"); ?></th>
-                            <th><?= lang("Discount"); ?></th>
-                            <th><?= lang("Grand_Total"); ?></th>
+                            <th><?= lang("Qty(Guest)"); ?></th>
+                            <th><?= lang("Total"); ?></th>
+                            <th><?= lang("Total_Qty"); ?></th>
+                            <th><?= lang("Total_Amount"); ?></th>
                         </tr>
                         </thead>
                         <tbody>
                         <tr>
-                            <td colspan="9" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
+                            <td colspan="7" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
                         </tr>
                         </tbody>
                         <tfoot class="dtFilter">
                         <tr class="active">
-                            <th></th>
                             <th></th>
                             <th></th>
                             <th></th>
@@ -250,12 +260,12 @@ if ($this->input->post('end_date')) {
     $(document).ready(function () {
         $('#pdf').click(function (event) {
             event.preventDefault();
-            window.location.href = "<?=admin_url('reports/getOrderTransactionReport/pdf/?v=1' . $v)?>";
+            window.location.href = "<?=admin_url('reports/getOrderSummaryReport/pdf/?v=1' . $v)?>";
             return false;
         });
         $('#xls').click(function (event) {
             event.preventDefault();
-            window.location.href = "<?=admin_url('reports/getOrderTransactionReport/0/xls/?v=1' . $v)?>";
+            window.location.href = "<?=admin_url('reports/getOrderSummaryReport/0/xls/?v=1' . $v)?>";
             return false;
         });
         $('#image').click(function (event) {
