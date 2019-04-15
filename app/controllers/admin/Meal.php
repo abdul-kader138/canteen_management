@@ -376,7 +376,7 @@ class Meal extends MY_Controller
         }
 
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
-        $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
+        $this->form_validation->set_rules('order_date', lang("order_date"), 'required');
         $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
 
         if ($this->form_validation->run() == true) {
