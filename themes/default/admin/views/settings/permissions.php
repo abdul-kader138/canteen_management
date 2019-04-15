@@ -351,6 +351,12 @@
                                     <td class="text-center">
                                         <input type="checkbox" value="1" class="checkbox" name="meal-delete_food_order" <?php echo $p->{'meal-delete_food_order'} ? "checked" : ''; ?>>
                                     </td>
+                                    <td>
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" id="meal-bulk_food_order" class="checkbox" name="meal-bulk_food_order" <?php echo $p->{'meal-bulk_food_order'} ? "checked" : ''; ?>>
+                                            <label for="meal-bulk_food_order" class="padding05"><?= lang('Bulk_Food_Order') ?></label>
+                                        </span>
+                                    </td>
                                 </tr>
 
                                 <tr>

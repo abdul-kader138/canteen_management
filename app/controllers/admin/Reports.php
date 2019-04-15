@@ -3337,9 +3337,7 @@ class Reports extends MY_Controller
                 inner JOIN " . $this->db->dbprefix('users') . " pi ON pp.user_id = pi.id";
             if ($start_date) {
                 $pp .= " WHERE ";
-                if ($start_date) {
-                    $pp .= " pp.order_date >= '{$start_date}' AND pp.order_date <= '{$end_date}' ";
-                }
+                $pp .= " pp.order_date >= '{$start_date}' AND pp.order_date <= '{$end_date}' ";
             }
             $pp .= " group by  user_id,  order_date,  product_name,  description order by  order_date asc,  first_name asc,  description desc ) POrder";
             $this->load->library('datatables');

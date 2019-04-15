@@ -727,10 +727,16 @@
                                                     </a>
 
                                                 </li>
-                                                <li id="meal_food_Order">
+                                                <li id="meal_food_order">
                                                     <a class="submenu" href="<?= admin_url('meal/food_order'); ?>">
                                                         <i class="fa fa-plus"></i>
                                                         <span class="text"> <?= lang('Food_Order'); ?></span>
+                                                    </a>
+                                                </li>
+                                                <li id="meal_food_order_group">
+                                                    <a class="submenu" href="<?= admin_url('meal/food_order_group'); ?>">
+                                                        <i class="fa fa-plus"></i>
+                                                        <span class="text"> <?= lang('Bulk_Food_Order'); ?></span>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -1284,6 +1290,16 @@
                                                                href="<?= admin_url('meal/food_order'); ?>">
                                                                 <i class="fa fa-plus"></i>
                                                                 <span class="text"> <?= lang('Food_Order'); ?></span>
+                                                            </a>
+                                                        </li>
+                                                    <?php } ?>
+
+                                                    <?php if ($GP['meal-food_order_group']) { ?>
+                                                        <li id="meal_food_order_group">
+                                                            <a class="submenu"
+                                                               href="<?= admin_url('meal/food_order_group'); ?>">
+                                                                <i class="fa fa-plus"></i>
+                                                                <span class="text"> <?= lang('Bulk_Food_Order'); ?></span>
                                                             </a>
                                                         </li>
                                                     <?php } ?>

@@ -150,7 +150,7 @@ class Meal extends MY_Controller
         $s_date = $this->sma->fld($this->input->get('date'));
         if (trim($s_date) == date("Y-m-d")) {
             $current_time = date("H:i:s");
-            $fixed_time = strtotime("11:00:00");
+            $fixed_time = strtotime("19:00:00");
             $time = strtotime($current_time);
             if ($fixed_time < $time) $row = false;
         }
@@ -185,16 +185,16 @@ class Meal extends MY_Controller
 
         $this->form_validation->set_rules('note', $this->lang->line("note"), 'trim');
         if ($this->form_validation->run() == true) {
-            $current_user=$this->meal_model->getUserByID($this->session->userdata('user_id'));
+            $current_user = $this->meal_model->getUserByID($this->session->userdata('user_id'));
             $i = isset($_POST['orderDate']) ? sizeof($_POST['orderDate']) : 0;
             for ($r = 0; $r < $i; $r++) {
                 $order_date = isset($_POST['orderDate'][$r]) ? $this->sma->fsd($_POST['orderDate'][$r]) : null;
                 $menu_id = $_POST['menu_id'][$r];
                 $order_qty = $_POST['menu_quantity'][$r];
                 $info = $this->meal_model->getTodayMenuByID($menu_id);
-                $discount_amounts=0;
-                if($current_user->allow_discount == 1){
-                    $discount_amounts=(($info->product_price * $current_user->discount) /100);
+                $discount_amounts = 0;
+                if ($current_user->allow_discount == 1) {
+                    $discount_amounts = (($info->product_price * $current_user->discount) / 100);
                 }
                 $product = array(
                     'title' => $info->title,
@@ -207,7 +207,7 @@ class Meal extends MY_Controller
                     'product_id' => $info->product_id,
                     'product_name' => $info->product_name,
                     'product_price' => $info->product_price,
-                    'discount_amount' => ($info->discount_amount+$discount_amounts),
+                    'discount_amount' => ($info->discount_amount + $discount_amounts),
                     'status' => 'Order',
                     'note' => $this->sma->clear_tags($this->input->post('note')),
                     'qty' => 1
@@ -273,10 +273,10 @@ class Meal extends MY_Controller
             $menu_id = $this->input->post('menu_name');
             $order_qty = $this->input->post('order_quantity');
             $info = $this->meal_model->getTodayMenuByID($menu_id);
-            $current_user=$this->meal_model->getUserByID($this->session->userdata('user_id'));
-            $discount_amounts=0;
-            if($current_user->allow_discount == 1){
-                $discount_amounts=(($info->product_price * $current_user->discount) /100);
+            $current_user = $this->meal_model->getUserByID($this->session->userdata('user_id'));
+            $discount_amounts = 0;
+            if ($current_user->allow_discount == 1) {
+                $discount_amounts = (($info->product_price * $current_user->discount) / 100);
             }
             $product = array(
                 'title' => $info->title,
@@ -289,7 +289,7 @@ class Meal extends MY_Controller
                 'product_id' => $info->product_id,
                 'product_name' => $info->product_name,
                 'product_price' => $info->product_price,
-                'discount_amount' => ($info->discount_amount+$discount_amounts),
+                'discount_amount' => ($info->discount_amount + $discount_amounts),
                 'status' => 'Order',
                 'note' => $this->sma->clear_tags($this->input->post('note')),
                 'qty' => 1
@@ -324,4 +324,81 @@ class Meal extends MY_Controller
             $this->load->view($this->theme . 'meal/edit_food_order', $this->data);
         }
     }
+
+
+    function food_order_group($date = NULL)
+    {
+//        $this->sma->checkPermissions();
+
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        $this->data['date'] = $date;
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => '#', 'page' => lang('products')));
+        $meta = array('page_title' => lang('products'), 'bc' => $bc);
+        $this->page_construct('meal/food_order_group', $meta, $this->data);
+    }
+
+
+    function getFoodOrderGroup()
+    {
+//        $this->sma->checkPermissions('sales', TRUE);
+        $order_date = $this->input->get('order_date') ? $this->input->get('order_date') : NULL;
+        $menu_id = $this->input->get('menu_id') ? $this->input->get('menu_id') : NULL;
+        if (!$order_date) $order_date = date($this->dateFormats['php_sdate']);
+        if ($order_date) $order_date = $this->sma->fld($order_date);
+
+//        if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+//            $user = $this->session->userdata('user_id');
+//        }
+
+
+        $si = "( SELECT ut.id as u_id, upper(ut.username) as us_name, concat(ut.first_name,' ',ut.last_name) as u_name FROM " . $this->db->dbprefix('users') . " as ut WHERE id NOT IN (select ui.user_id from " . $this->db->dbprefix('food_order_details') . " as ui ";
+        if ($order_date) {
+            $si .= " WHERE ";
+            $si .= " ui.order_date = '{$order_date}' ";
+        }
+        $si .= ") group by  id ) POrder";
+
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("{$this->db->dbprefix('users')}.id as id, {$this->db->dbprefix('users')}.username,concat({$this->db->dbprefix('users')}.first_name,' ',{$this->db->dbprefix('users')}.last_name) as names")
+            ->from('users')
+            ->join($si, 'POrder.u_id=users.id', 'inner');
+
+        echo $this->datatables->generate();
+
+    }
+
+    public function bulk_food_order()
+    {
+        if (!$this->Owner && !$this->GP['meal-bulk_food_order']) {
+            $this->session->set_flashdata('warning', lang('access_denied'));
+            redirect($_SERVER["HTTP_REFERER"]);
+        }
+
+        $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
+        $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
+        $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
+
+        if ($this->form_validation->run() == true) {
+
+            if (!empty($_POST['val'])) {
+
+//                $this->sma->checkPermissions('delete');
+                foreach ($_POST['val'] as $id) {
+//                    $this->sales_model->deleteSale($id);
+                }
+            } else {
+                $this->session->set_flashdata('error', lang("no_sale_selected"));
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+            admin_redirect(isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : 'welcome');
+
+
+        } else {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect($_SERVER["HTTP_REFERER"]);
+        }
+    }
+
+
 }
