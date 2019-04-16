@@ -83,6 +83,16 @@
                                                     ?>
                                                 </div>
                                             </div>
+
+                                            <div class="form-group">
+                                                <?= lang('Discount_Type', 'Discount_Type'); ?>
+                                                <div class="controls">  <?php
+                                                    $ge[''] = array('As per Policy' => lang('As per Policy'),'Full Free' => lang('Full Free'));
+                                                    echo form_dropdown('discount_type', $ge, (isset($_POST['discount_type']) ? $_POST['discount_type'] : $user->discount_type), 'class="tip form-control" id="gender" required="required"');
+                                                    ?>
+                                                </div>
+                                            </div>
+
                                             <?php if (($Owner || $Admin) && $id != $this->session->userdata('user_id')) { ?>
                                             <div class="form-group">
                                                 <?= lang('award_points', 'award_points'); ?>
@@ -197,6 +207,13 @@
                                                                             <div class="form-group">
                                                                                 <?= lang("allow_discount", "allow_discount"); ?>
                                                                                 <?= form_dropdown('allow_discount', $opts, (isset($_POST['allow_discount']) ? $_POST['allow_discount'] : $user->allow_discount), 'id="allow_discount" class="form-control select" style="width:100%;"'); ?>
+                                                                            </div>
+
+                                                                            <div class="form-group">
+                                                                                <?php echo lang('Discount(%)', 'Discount(%)'); ?>
+                                                                                <div class="controls">
+                                                                                    <?php echo form_input('discount', (isset($_POST['discount']) ? $_POST['discount'] : $user->discount), 'class="form-control" id="discount"'); ?>
+                                                                                </div>
                                                                             </div>
                                                                             <?php } ?>
                                                                         </div>

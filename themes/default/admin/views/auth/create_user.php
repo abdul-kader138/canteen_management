@@ -34,7 +34,14 @@
                                 echo form_dropdown('gender', $ge, (isset($_POST['gender']) ? $_POST['gender'] : ''), 'class="tip form-control" id="gender" data-placeholder="' . lang("select") . ' ' . lang("gender") . '" required="required"');
                                 ?>
                             </div>
-
+                            <div class="form-group">
+                                <?= lang('Discount_Type', 'Discount_Type'); ?>
+                                <div class="controls">  <?php
+                                    $ge[''] = array('As per Policy' => lang('As per Policy'),'Full Free' => lang('Full Free'));
+                                    echo form_dropdown('discount_type', $ge, (isset($_POST['discount_type']) ? $_POST['discount_type'] : $user->discount_type), 'class="tip form-control" id="gender" required="required"');
+                                    ?>
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <?php echo lang('company', 'company'); ?>
                                 <div class="controls">

@@ -13,6 +13,18 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <?= lang("User_ID", "User_ID"); ?>
+                        <?php echo form_input('usernames', (isset($_POST['usernames']) ? $_POST['usernames'] : $user->username), 'class="form-control date" readonly id="usernames"'); ?>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <?= lang("User_Name", "User_Name"); ?>
+                        <?php echo form_input('userfullname', (isset($_POST['userfullname']) ? $_POST['userfullname'] : ($user->first_name.' '.$user->last_name)), 'class="form-control date" readonly id="userfullname"'); ?>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
                         <?= lang("Order_Date", "sldate"); ?>
                         <?php echo form_input('order_date', (isset($_POST['order_date']) ? $_POST['order_date'] : $order->order_date), 'class="form-control input-tip" readonly id="order_date" required="required"'); ?>
 

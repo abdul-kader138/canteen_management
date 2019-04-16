@@ -3480,14 +3480,14 @@ class Reports extends MY_Controller
                 $pp .= " pp.order_date >= '{$start_date}' AND pp.order_date <= '{$end_date}' ";
                 $tt .= " tt.order_date >= '{$start_date}' AND tt.order_date <= '{$end_date}' ";
             }
-            $pp .= " group by user_id order by order_date asc, first_name asc, description desc ) POrderOwn";
-            $tt .= " group by user_id order by order_date asc, first_name asc, description desc ) POrderGuest";
+            $pp .= " group by user_id  ) POrderOwn";
+            $tt .= " group by user_id ) POrderGuest";
             $this->load->library('datatables');
             $this->datatables
-                ->select(" users.username as uname, POrderOwn.full_name,POrderOwn.qty as own_qty,(POrderOwn.product_price-POrderOwn.discount_amount) as own_g_total,POrderGuest.qty,(POrderGuest.product_price-POrderGuest.discount_amount) as guest_g_total, (POrderGuest.qty+POrderOwn.qty) as total_qtys,((POrderOwn.product_price-POrderOwn.discount_amount) +(POrderGuest.product_price-POrderGuest.discount_amount)) as g_toatals")
+                ->select(" users.username as uname, POrderOwn.full_name,COALESCE(POrderOwn.qty,0) as own_qty,(COALESCE(POrderOwn.product_price,0)-COALESCE(POrderOwn.discount_amount,0)) as own_g_total,COALESCE(POrderGuest.qty,0) as POrderGuestQty,(COALESCE(POrderGuest.product_price,0)-COALESCE(POrderGuest.discount_amount,0)) as guest_g_total, (COALESCE(POrderGuest.qty,0)+COALESCE(POrderOwn.qty,0)) as total_qtys,((COALESCE(POrderOwn.product_price,0)-COALESCE(POrderOwn.discount_amount,0)) +(COALESCE(POrderGuest.product_price,0)-COALESCE(POrderGuest.discount_amount,0))) as g_toatals")
                 ->from('users')
                 ->join($pp, 'POrderOwn.user_id=users.id', 'inner')
-                ->join($tt, 'POrderGuest.user_id=users.id', 'inner');
+                ->join($tt, 'POrderGuest.user_id=users.id', 'left');
 
             if ($user) {
                 $this->datatables->where('id', $user);

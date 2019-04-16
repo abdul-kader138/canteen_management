@@ -2,10 +2,6 @@
 <?php
 
 $v = "";
-/* if($this->input->post('name')){
-  $v .= "&product=".$this->input->post('product');
-  } */
-
 if ($this->input->post('order_date')) {
     $v .= "&order_date=" . $this->input->post('order_date');
 }
@@ -36,6 +32,8 @@ if ($this->input->post('menu_id')) {
             var Current_Date = new Date(dates_1);
 
             // not less than current date
+            $('#orderDate').val('');
+            $('#menuId').val('');
             $('#sel_menu_ids').empty();
             if (GivenDate < Current_Date) {
                 $('#' + date_id).val('');
@@ -141,33 +139,6 @@ if ($this->input->post('menu_id')) {
         });
     </script>
     <div class="box">
-        <div class="box-header">
-            <h2 class="blue"><i class="fa-fw fa fa-heart"></i><?= lang('Bulk_Food_Order'); ?> <?php
-                if ($this->input->post('start_date')) {
-                    echo "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
-                }
-                ?>
-            </h2>
-
-            <div class="box-icon">
-                <ul class="btn-tasks">
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#">
-                            <i class="icon fa fa-tasks tip" data-placement="left" title="<?= lang("actions") ?>"></i>
-                        </a>
-                        <ul class="dropdown-menu pull-right tasks-menus" role="menu" aria-labelledby="dLabel">
-                            <li>
-                                <a href="#" class="bpo" title="<b><?= lang("Food_Order") ?></b>"
-                                   data-content="<p><?= lang('r_u_sure') ?></p><button type='button' class='btn btn-danger' id='delete' data-action='delete'><?= lang('i_m_sure') ?></a> <button class='btn bpo-close'><?= lang('no') ?></button>"
-                                   data-html="true" data-placement="left">
-                                    <i class="fa fa-plus"></i> <?= lang('Food_Order') ?>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </div>
         <div class="box-content">
             <div class="row">
                 <div class="col-lg-12">
@@ -229,7 +200,7 @@ if ($this->input->post('menu_id')) {
         <div class="form-group">
             <input type="hidden" name="form_action" value="add" id="form_action"/>
             <input type="hidden" name="orderDate" value="0" id="orderDate"/>
-            <input type="hidden" name="menu_id" value="add" id="menu_id"/>
+            <input type="hidden" name="menuId" value="0" id="menuId"/>
             <?= form_submit('food_orders', 'Food Order', ' class="btn btn-primary" id="action-form-submit"') ?>
         </div>
         </div>

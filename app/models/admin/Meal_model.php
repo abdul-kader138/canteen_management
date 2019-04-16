@@ -49,10 +49,11 @@ class Meal_model extends CI_Model
         return FALSE;
     }
 
-    public function getOrderByDate($date)
+    public function getOrderByDate($date,$id=NULL)
     {
+        if ($id == NULL) $id=$this->session->userdata('user_id');
         $this->db->select("id, title, user_id");
-        $q = $this->db->get_where('food_order_details', array('order_date' => trim($date),'user_id'=>$this->session->userdata('user_id')), 1);
+        $q = $this->db->get_where('food_order_details', array('order_date' => trim($date),'user_id'=>$id), 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
@@ -108,6 +109,18 @@ class Meal_model extends CI_Model
             return $q->row();
         }
         return FALSE;
+    }
+
+
+    public function addGroupOrderBatch($data)
+    {
+
+        $this->db->trans_strict(TRUE);
+        $this->db->trans_start();
+        if(!empty($data)) $this->db->insert_batch('food_order_details',$data);
+        $this->db->trans_complete();
+        if ($this->db->trans_status() === FALSE) return false;
+        return true;
     }
 
 

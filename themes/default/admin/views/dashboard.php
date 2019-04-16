@@ -44,9 +44,9 @@
                 type: 'pie',
                 name: '<?php echo $this->lang->line("Order_Details"); ?>',
                 data: [
-                    ['<?php echo $this->lang->line("Price_Without_Discount"); ?>', <?php echo $totals->price; ?>],
-                    ['<?php echo $this->lang->line("Total_Price"); ?>', <?php echo $totals->total_price; ?>],
-                    ['<?php echo $this->lang->line("Total_Discount"); ?>', <?php echo $totals->d_price; ?>],
+                    ['<?php echo $this->lang->line("Price_Without_Discount"); ?>', <?php echo ($totals->price ? $totals->price : 0); ?>],
+                    ['<?php echo $this->lang->line("Total_Price"); ?>', <?php echo ($totals->total_price ? $totals->total_price : 0); ?>],
+                    ['<?php echo $this->lang->line("Total_Discount"); ?>', <?php echo ($totals->d_price ? $totals->d_price : 0); ?>],
                 ]
 
             }]
