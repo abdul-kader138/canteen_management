@@ -19,24 +19,10 @@
 </style>
 <div class="box">
     <div class="box-header">
-        <h2 class="blue"><i class="fa-fw fa fa-calendar"></i><?= lang('monthly_sales').' ('.(isset($sel_warehouse) ? $sel_warehouse->name : lang('all_warehouses')).')'; ?></h2>
+        <h2 class="blue"><i class="fa-fw fa fa-calendar"></i><?= lang('Monthly_Order_Status'); ?></h2>
 
         <div class="box-icon">
             <ul class="btn-tasks">
-                <?php if (!empty($warehouses) && !$this->session->userdata('warehouse_id')) { ?>
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="icon fa fa-building-o tip" data-placement="left" title="<?=lang("warehouses")?>"></i></a>
-                        <ul class="dropdown-menu pull-right tasks-menus" role="menu" aria-labelledby="dLabel">
-                            <li><a href="<?=admin_url('reports/monthly_sales/0/'.$year)?>"><i class="fa fa-building-o"></i> <?=lang('all_warehouses')?></a></li>
-                            <li class="divider"></li>
-                            <?php
-                                foreach ($warehouses as $warehouse) {
-                                        echo '<li><a href="' . admin_url('reports/monthly_sales/'.$warehouse->id.'/'.$year) . '"><i class="fa fa-building"></i>' . $warehouse->name . '</a></li>';
-                                    }
-                                ?>
-                        </ul>
-                    </li>
-                <?php } ?>
                 <li class="dropdown">
                     <a href="#" id="image" class="tip" title="<?= lang('save_image') ?>">
                         <i class="icon fa fa-file-picture-o"></i>
@@ -126,7 +112,7 @@
                             <?php
                             if (!empty($sales)) {
                                 foreach ($sales as $value) {
-                                    $array[$value->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tbody><tr><td>" . $this->lang->line("discount") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->discount) . "</td></tr><tr><td>" . $this->lang->line("shipping") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->shipping) . "</td></tr><tr><td>" . $this->lang->line("product_tax") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->tax1) . "</td></tr><tr><td>" . $this->lang->line("order_tax") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->tax2) . "</td></tr><tr><td>" . $this->lang->line("total") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->total) . "</td></tr></tbody></table>";
+                                    $array[$value->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tbody><tr><td>" . $this->lang->line("Total") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->product_price) . "</td></tr><tr><td>" . $this->lang->line("Discount") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->discount_amount) . "</td></tr><tr><td>" . $this->lang->line("Grand_Total") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->total) . "</td></tr></tbody></table>";
                                 }
                                 for ($i = 1; $i <= 12; $i++) {
                                     echo '<td width="8.3%">';

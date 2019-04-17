@@ -73,7 +73,7 @@ if ($this->input->post('end_date')) {
                 });
                 $.ajax({'dataType': 'json', 'type': 'POST', 'url': sSource, 'data': aoData, 'success': fnCallback});
             },
-            "aoColumns": [{"mRender": fsd}, null, {"mRender": order_status}, null, null, null, {"mRender": price_status}, {"mRender": discount_status}, {"mRender": grand_status}],
+            "aoColumns": [null, null, {"mRender": order_status}, null, null, null, {"mRender": price_status}, {"mRender": discount_status}, {"mRender": grand_status}],
             'fnRowCallback': function (nRow, aData, iDisplayIndex) {
             },
             "fnFooterCallback": function (nRow, aaData, iStart, iEnd, aiDisplay) {
@@ -96,7 +96,7 @@ if ($this->input->post('end_date')) {
         }).fnSetFilteringDelay().dtFilter([
             {
                 column_number: 0,
-                filter_default_label: "[<?=lang('date');?> (dd/mm/yyyy)]",
+                filter_default_label: "[<?=lang('date');?> (yyyy-mm-dd)]",
                 filter_type: "text",
                 data: []
             },
@@ -174,7 +174,7 @@ if ($this->input->post('end_date')) {
                                 <?php
                                 $us[""] = lang('select') . ' ' . lang('Customer');
                                 foreach ($users as $user) {
-                                    $us[$user->id] = $user->first_name . " " . $user->last_name;
+                                    $us[$user->id] = $user->first_name . " " . $user->last_name."(".$user->username.")";
                                 }
                                 echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("user") . '"');
                                 ?>

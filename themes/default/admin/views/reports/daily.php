@@ -61,24 +61,10 @@
 </style>
 <div class="box">
     <div class="box-header">
-        <h2 class="blue"><i class="fa-fw fa fa-calendar"></i><?= lang('daily_sales').' ('.(isset($sel_warehouse) ? $sel_warehouse->name : lang('all_warehouses')).')'; ?></h2>
+        <h2 class="blue"><i class="fa-fw fa fa-calendar"></i><?= lang('Daily_Order_Status'); ?></h2>
 
         <div class="box-icon">
             <ul class="btn-tasks">
-                <?php if (!empty($warehouses) && !$this->session->userdata('warehouse_id')) { ?>
-                    <li class="dropdown">
-                        <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="icon fa fa-building-o tip" data-placement="left" title="<?=lang("warehouses")?>"></i></a>
-                        <ul class="dropdown-menu pull-right tasks-menus" role="menu" aria-labelledby="dLabel">
-                            <li><a href="<?=admin_url('reports/daily_sales/0/'.$year.'/'.$month)?>"><i class="fa fa-building-o"></i> <?=lang('all_warehouses')?></a></li>
-                            <li class="divider"></li>
-                            <?php
-                                foreach ($warehouses as $warehouse) {
-                                        echo '<li><a href="' . admin_url('reports/daily_sales/'.$warehouse->id.'/'.$year.'/'.$month) . '"><i class="fa fa-building"></i>' . $warehouse->name . '</a></li>';
-                                    }
-                                ?>
-                        </ul>
-                    </li>
-                <?php } ?>
                 <li class="dropdown">
                     <a href="#" id="image" class="tip" title="<?= lang('save_image') ?>">
                         <i class="icon fa fa-file-picture-o"></i>

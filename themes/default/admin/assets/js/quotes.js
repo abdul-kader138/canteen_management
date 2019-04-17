@@ -1145,7 +1145,7 @@ function setMenuList(obj) {
             if (data) {
                 var opt = $("<select id='sel_menu_id_" + id[2] + "' name='menu_id[]' class='form-control select' />");
                 $.each(data, function () {
-                    $("<option />", {value: this.id, text: this.product_name}).appendTo(opt);
+                    $("<option />", {value: this.id, text: ('('+this.product_name+' -'+this.title+' )'+' # '+this.product_price+' Tk')}).appendTo(opt);
                 });
                 $('#' + menu_id).append(opt);
             }else{

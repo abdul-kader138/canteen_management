@@ -98,7 +98,7 @@ if ($this->input->post('menu_id')) {
                     if (data) {
                         var opt = $("<select id='sel_menu_id' name='sel_menu_id' class='form-control select' />");
                         $.each(data, function () {
-                            $("<option />", {value: this.id, text: this.product_name}).appendTo(opt);
+                            $("<option />", {value: this.id, text: ('('+this.product_name+' -'+this.title+' )'+' # '+this.product_price+' Tk')}).appendTo(opt);
                         });
                         $('#sel_menu_ids').empty().append(opt);
                         $('#orderDate').val($('#order_date').val());

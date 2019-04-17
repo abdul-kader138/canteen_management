@@ -139,15 +139,15 @@ class Reports_model extends CI_Model
         return FALSE;
     }
 
-    public function getDailySales($year, $month, $warehouse_id = NULL)
+    public function getDailySales($year, $month, $warehouse_id = NULL,$user_id=NULL)
     {
-        $myQuery = "SELECT DATE_FORMAT( date,  '%e' ) AS date, SUM( COALESCE( product_tax, 0 ) ) AS tax1, SUM( COALESCE( order_tax, 0 ) ) AS tax2, SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( total_discount, 0 ) ) AS discount, SUM( COALESCE( shipping, 0 ) ) AS shipping
-            FROM " . $this->db->dbprefix('sales') . " WHERE ";
-        if ($warehouse_id) {
-            $myQuery .= " warehouse_id = {$warehouse_id} AND ";
+        $myQuery = "SELECT DATE_FORMAT( order_date,  '%e' ) AS date, SUM( COALESCE( (product_price - discount_amount), 0 ) ) AS total, SUM( COALESCE( product_price, 0 ) ) AS product_price, SUM( COALESCE( discount_amount, 0 ) ) AS discount_amount
+            FROM " . $this->db->dbprefix('food_order_details') . " WHERE ";
+        if ($user_id) {
+            $myQuery .= " user_id = {$user_id} AND ";
         }
-        $myQuery .= " DATE_FORMAT( date,  '%Y-%m' ) =  '{$year}-{$month}'
-            GROUP BY DATE_FORMAT( date,  '%e' )";
+        $myQuery .= " DATE_FORMAT( order_date,  '%Y-%m' ) =  '{$year}-{$month}'
+            GROUP BY DATE_FORMAT( order_date,  '%e' )";
         $q = $this->db->query($myQuery, false);
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -158,15 +158,15 @@ class Reports_model extends CI_Model
         return FALSE;
     }
 
-    public function getMonthlySales($year, $warehouse_id = NULL)
+    public function getMonthlySales($year, $warehouse_id = NULL,$user_id=NULL)
     {
-        $myQuery = "SELECT DATE_FORMAT( date,  '%c' ) AS date, SUM( COALESCE( product_tax, 0 ) ) AS tax1, SUM( COALESCE( order_tax, 0 ) ) AS tax2, SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( total_discount, 0 ) ) AS discount, SUM( COALESCE( shipping, 0 ) ) AS shipping
-            FROM " . $this->db->dbprefix('sales') . " WHERE ";
-        if ($warehouse_id) {
-            $myQuery .= " warehouse_id = {$warehouse_id} AND ";
+        $myQuery = "SELECT DATE_FORMAT( order_date,  '%c' ) AS date, SUM( COALESCE( (product_price - discount_amount), 0 ) ) AS total, SUM( COALESCE( product_price, 0 ) ) AS product_price, SUM( COALESCE( discount_amount, 0 ) ) AS discount_amount
+            FROM " . $this->db->dbprefix('food_order_details') . " WHERE ";
+        if ($user_id) {
+            $myQuery .= " user_id = {$user_id} AND ";
         }
-        $myQuery .= " DATE_FORMAT( date,  '%Y' ) =  '{$year}'
-            GROUP BY date_format( date, '%c' ) ORDER BY date_format( date, '%c' ) ASC";
+        $myQuery .= " DATE_FORMAT( order_date,  '%Y' ) =  '{$year}'
+            GROUP BY date_format( order_date, '%c' ) ORDER BY date_format( order_date, '%c' ) ASC";
         $q = $this->db->query($myQuery, false);
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {

@@ -893,9 +893,6 @@ class Reports extends MY_Controller
     function daily_sales($warehouse_id = NULL, $year = NULL, $month = NULL, $pdf = NULL, $user_id = NULL)
     {
         $this->sma->checkPermissions();
-        if (!$this->Owner && !$this->Admin && $this->session->userdata('warehouse_id')) {
-            $warehouse_id = $this->session->userdata('warehouse_id');
-        }
         if (!$year) {
             $year = date('Y');
         }
@@ -940,11 +937,12 @@ class Reports extends MY_Controller
         {table_close}</table></div>{/table_close}';
 
         $this->load->library('calendar', $config);
-        $sales = $user_id ? $this->reports_model->getStaffDailySales($user_id, $year, $month, $warehouse_id) : $this->reports_model->getDailySales($year, $month, $warehouse_id);
+//        $sales = $user_id ? $this->reports_model->getStaffDailySales($user_id, $year, $month, $warehouse_id) : $this->reports_model->getDailySales($year, $month, $warehouse_id,$user_id);
+        $sales = $this->reports_model->getDailySales($year, $month, $warehouse_id,$user_id);
 
         if (!empty($sales)) {
             foreach ($sales as $sale) {
-                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . lang("discount") . "</td><td>" . $this->sma->formatMoney($sale->discount) . "</td></tr><tr><td>" . lang("shipping") . "</td><td>" . $this->sma->formatMoney($sale->shipping) . "</td></tr><tr><td>" . lang("product_tax") . "</td><td>" . $this->sma->formatMoney($sale->tax1) . "</td></tr><tr><td>" . lang("order_tax") . "</td><td>" . $this->sma->formatMoney($sale->tax2) . "</td></tr><tr><td>" . lang("total") . "</td><td>" . $this->sma->formatMoney($sale->total) . "</td></tr></table>";
+                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . lang("Total") . "</td><td>" . $this->sma->formatMoney($sale->product_price) . "</td></tr><tr><td>" . lang("Discount") . "</td><td>" . $this->sma->formatMoney($sale->discount_amount) . "</td></tr><tr><td>" . lang("Grand_total") . "</td><td>" . $this->sma->formatMoney($sale->total) . "</td></tr></table>";
             }
         } else {
             $daily_sale = array();
@@ -959,11 +957,8 @@ class Reports extends MY_Controller
             $html = str_replace('<p class="introtext">' . lang("reports_calendar_text") . '</p>', '', $html);
             $this->sma->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-        $this->data['warehouses'] = $this->site->getAllWarehouses();
-        $this->data['warehouse_id'] = $warehouse_id;
-        $this->data['sel_warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('daily_sales_report')));
-        $meta = array('page_title' => lang('daily_sales_report'), 'bc' => $bc);
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('Daily_Order_Status')));
+        $meta = array('page_title' => lang('Daily_Order_Status'), 'bc' => $bc);
         $this->page_construct('reports/daily', $meta, $this->data);
 
     }
@@ -971,10 +966,6 @@ class Reports extends MY_Controller
 
     function monthly_sales($warehouse_id = NULL, $year = NULL, $pdf = NULL, $user_id = NULL)
     {
-        $this->sma->checkPermissions();
-        if (!$this->Owner && !$this->Admin && $this->session->userdata('warehouse_id')) {
-            $warehouse_id = $this->session->userdata('warehouse_id');
-        }
         if (!$year) {
             $year = date('Y');
         }
@@ -984,18 +975,16 @@ class Reports extends MY_Controller
         $this->load->language('calendar');
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['year'] = $year;
-        $this->data['sales'] = $user_id ? $this->reports_model->getStaffMonthlySales($user_id, $year, $warehouse_id) : $this->reports_model->getMonthlySales($year, $warehouse_id);
+//        $this->data['sales'] = $user_id ? $this->reports_model->getStaffMonthlySales($user_id, $year, $warehouse_id) : $this->reports_model->getMonthlySales($year, $warehouse_id,$user_ids);
+        $this->data['sales'] =$this->reports_model->getMonthlySales($year, $warehouse_id,$user_id);
         if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/monthly', $this->data, true);
             $name = lang("monthly_sales") . "_" . $year . ".pdf";
             $html = str_replace('<p class="introtext">' . lang("reports_calendar_text") . '</p>', '', $html);
             $this->sma->generate_pdf($html, $name, null, null, null, null, null, 'L');
         }
-        $this->data['warehouses'] = $this->site->getAllWarehouses();
-        $this->data['warehouse_id'] = $warehouse_id;
-        $this->data['sel_warehouse'] = $warehouse_id ? $this->site->getWarehouseByID($warehouse_id) : NULL;
-        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('monthly_sales_report')));
-        $meta = array('page_title' => lang('monthly_sales_report'), 'bc' => $bc);
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('Monthly_Order_Status')));
+        $meta = array('page_title' => lang('Monthly_Order_Status'), 'bc' => $bc);
         $this->page_construct('reports/monthly', $meta, $this->data);
 
     }

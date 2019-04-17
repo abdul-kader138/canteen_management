@@ -186,7 +186,7 @@ if ($this->input->post('end_date')) {
                                 <?php
                                 $us[""] = lang('select') . ' ' . lang('Customer');
                                 foreach ($users as $user) {
-                                    $us[$user->id] = $user->first_name . " " . $user->last_name;
+                                    $us[$user->id] = $user->first_name . " " . $user->last_name."(".$user->username.")";
                                 }
                                 echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control" id="user" data-placeholder="' . $this->lang->line("select") . " " . $this->lang->line("user") . '"');
                                 ?>

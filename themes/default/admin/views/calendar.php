@@ -89,7 +89,7 @@
                                                 <?php
                                                 $cat[''] = "";
                                                 foreach ($products as $product) {
-                                                    $cat[$product->id] = $product->name;
+                                                    $cat[$product->id] = $product->name.' ('.round($product->price,2).' Tk)';
                                                 }
                                                 echo form_dropdown('product_id', $cat, (isset($_POST['product_id']) ? $_POST['product_id'] :''), 'class="form-control select product_id" id="product_id" placeholder="' . lang("select") . " " . lang("product") . '" required="required" style="width:100%"')
                                                 ?>

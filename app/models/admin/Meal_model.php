@@ -38,7 +38,7 @@ class Meal_model extends CI_Model
 
     public function getMenusByDate($date)
     {
-        $this->db->select("id, title, product_name");
+        $this->db->select("id, title, product_name,(product_price-discount_amount) as product_price");
         $q = $this->db->get_where('calendar', array('start' => $date));
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
