@@ -141,12 +141,13 @@ class Calendar extends MY_Controller
 
         if ($this->form_validation->run() == true) {
             $id = $this->input->post('id');
-            if ($event = $this->calendar_model->getEventByID($id)) {
-                if (!$this->Owner && $event->user_id != $this->session->userdata('user_id')) {
-                    $res = array('error' => 1, 'msg' => lang('access_denied'));
-                    $this->sma->send_json($res);
-                }
-            }
+            $event = $this->calendar_model->getEventByID($id);
+//            if ($event = $this->calendar_model->getEventByID($id)) {
+//                if (!$this->Owner && $event->user_id != $this->session->userdata('user_id')) {
+//                    $res = array('error' => 1, 'msg' => lang('access_denied'));
+//                    $this->sma->send_json($res);
+//                }
+//            }
             $data = array(
                 'title' => $this->input->post('title'),
                 'start' => $this->sma->fsd($this->input->post('start')),

@@ -44,7 +44,13 @@
                                for="customer_group"><?php echo $this->lang->line("Menu"); ?></label>
                         <?php
                         foreach ($menus as $menu) {
-                            $cgs[$menu->id] = $menu->product_name;
+                            var_dump($d1);
+                            var_dump($d2);
+
+                            var_dump($d3);
+
+                            $cgs[$menu->id] = '('.$menu->product_name.' -'.$menu->title.')'.' # '.$menu->product_price. 'Tk';
+
                         }
                         echo form_dropdown('menu_name', $cgs, $order->product_id, 'class="form-control select" id="menu_name" style="width:100%;" required="required"');
                         ?>

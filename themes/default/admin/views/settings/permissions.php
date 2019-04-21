@@ -372,6 +372,10 @@
                                             <label for="suppliers" class="padding05"><?= lang('Order_Summary_Report') ?></label>
                                         </span>
                                         <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" class="checkbox" id="order_report_menu_wise" name="reports-order_report_menu_wise" <?php echo $p->{'reports-order_report_menu_wise'} ? "checked" : ''; ?>>
+                                            <label for="suppliers" class="padding05"><?= lang('Order_Report_(Menu_Wise)') ?></label>
+                                        </span>
+                                        <span style="display:inline-block;">
                                             <input type="checkbox" value="1" class="checkbox" id="product_quantity_alerts" name="reports-quantity_alerts" <?php echo $p->{'reports-quantity_alerts'} ? "checked" : ''; ?>>
                                             <label for="product_quantity_alerts" class="padding05"><?= lang('product_quantity_alerts') ?></label>
                                         </span>

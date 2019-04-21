@@ -942,7 +942,7 @@ class Reports extends MY_Controller
 
         if (!empty($sales)) {
             foreach ($sales as $sale) {
-                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . lang("Total") . "</td><td>" . $this->sma->formatMoney($sale->product_price) . "</td></tr><tr><td>" . lang("Discount") . "</td><td>" . $this->sma->formatMoney($sale->discount_amount) . "</td></tr><tr><td>" . lang("Grand_total") . "</td><td>" . $this->sma->formatMoney($sale->total) . "</td></tr></table>";
+                $daily_sale[$sale->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tr><td>" . lang("Total_Qty") . "</td><td>" . $this->sma->formatMoney($sale->quantity) . "</td></tr><tr><td>" . lang("Total_Price") . "</td><td>" . $this->sma->formatMoney($sale->product_price) . "</td></tr><tr><td>" . lang("Discount") . "</td><td>" . $this->sma->formatMoney($sale->discount_amount) . "</td></tr><tr><td>" . lang("Total_Price(With_Discount)") . "</td><td>" . $this->sma->formatMoney($sale->total) . "</td></tr></table>";
             }
         } else {
             $daily_sale = array();
@@ -3216,8 +3216,6 @@ class Reports extends MY_Controller
         }
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['users'] = $this->reports_model->getStaff();
-        $this->data['billers'] = $this->site->getAllCompanies('biller');
-        $this->data['pos_settings'] = POS ? $this->reports_model->getPOSSetting('biller') : FALSE;
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('Order_Details_Report')));
         $meta = array('page_title' => lang('Order_Details_Report'), 'bc' => $bc);
         $this->page_construct('reports/order_transaction_report', $meta, $this->data);
@@ -3359,8 +3357,6 @@ class Reports extends MY_Controller
         }
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['users'] = $this->reports_model->getStaff();
-        $this->data['billers'] = $this->site->getAllCompanies('biller');
-        $this->data['pos_settings'] = POS ? $this->reports_model->getPOSSetting('biller') : FALSE;
         $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('Order_Details_Report')));
         $meta = array('page_title' => lang('Order_Details_Report'), 'bc' => $bc);
         $this->page_construct('reports/order_summary_report', $meta, $this->data);
@@ -3486,5 +3482,134 @@ class Reports extends MY_Controller
         }
 
     }
+
+    function order_report_menu_wise()
+    {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['reports-order_report_menu_wise'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        }
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        $this->data['users'] = $this->reports_model->getStaff();
+        $bc = array(array('link' => base_url(), 'page' => lang('home')), array('link' => admin_url('reports'), 'page' => lang('reports')), array('link' => '#', 'page' => lang('Order_Report_(Menu_Wise)')));
+        $meta = array('page_title' => lang('Order_Report_(Menu_Wise)'), 'bc' => $bc);
+        $this->page_construct('reports/order_report_menu_wise', $meta, $this->data);
+    }
+
+    function getOrderMenuWiseReport()
+    {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['reports-order_report_menu_wise'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        }
+        $start_date = $this->input->get('start_date') ? $this->input->get('start_date') : NULL;
+        $end_date = $this->input->get('end_date') ? $this->input->get('end_date') : NULL;
+
+        if ($start_date) {
+            $start_date = $this->sma->fsd($start_date);
+            $end_date = $this->sma->fsd($end_date);
+        }
+        if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $user = $this->session->userdata('user_id');
+        }
+            $this->load->library('datatables');
+            $this->datatables
+                ->select("order_date, title, product_name,sum(qty)")
+                ->from('food_order_details')
+                ->group_by('food_order_details.order_date,food_order_details.product_name');
+
+            if ($start_date) {
+                $this->datatables->where('order_date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+            }
+
+        if ($user) {
+            $this->datatables->where('user_id',$user);
+        }
+            echo $this->datatables->generate();
+
+    }
+
+    public function order_pdf($order_date = null, $view = null, $save_bufffer = null)
+    {
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['reports-order_report_menu_wise'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        }
+
+
+        if ($this->input->get('order_date')) {
+            $order_date = $this->input->get('order_date');
+        }
+
+        if($order_date) $date= date('Y-m-d', $order_date);
+
+        $footer = ' <table width="100%">
+        <tr>
+            <td style="width:23%; text-align:center">
+                <div style="float:left; margin:5px 15px">
+                    <p>&nbsp;</p>
+
+                    <p style="text-transform: capitalize;">
+
+                    <p style="border-top: 1px solid #000;">Prepared By</p>
+                </div>
+            </td>
+
+            <td style="width:23%; text-align:center">
+                <div style="float:left; margin:5px 15px">
+                    <p>&nbsp;</p>
+
+                    <p style="border-top: 1px solid #000;">Checked By</p>
+                </div>
+            </td>
+
+
+            <td style="width:23%; text-align:center">
+
+                <div style="float:left; margin:5px 15px">
+                    <p>&nbsp;</p>
+
+                    <p style="border-top: 1px solid #000;">Verified By</p>
+                </div>
+            </td>
+
+            <td style="width:23%; text-align:center">
+
+                <div style="float:left; margin:5px 15px">
+                    <p>&nbsp;</p>
+
+                    <p style="border-top: 1px solid #000;">Approved By</p>
+                </div>
+            </td>
+
+        </tr>
+    </table>';
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        $info = $this->reports_model->getAllOrderDetails($date);
+        $this->data['date'] = $date;
+        $this->data['rows'] = $info;
+        $name = $this->lang->line("Order_details") . "_" . str_replace('/', '_', $order_date) . ".pdf";
+        $html = $this->load->view($this->theme . 'reports/order_details_pdf', $this->data, true);
+        if ($view) {
+            $this->load->view($this->theme . 'reports/order_details_pdf', $this->data);
+        } elseif ($save_bufffer) {
+            return $this->sma->generate_customized_pdf($html, $name, $save_bufffer);
+        } else {
+            $this->sma->generate_customized_pdf($html, $name, null, $footer);
+        }
+    }
+
 
 }

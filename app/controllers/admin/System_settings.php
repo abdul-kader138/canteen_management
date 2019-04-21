@@ -814,6 +814,7 @@ class system_settings extends MY_Controller
 
                 'reports-order_transaction_report' => $this->input->post('reports-order_transaction_report'),
                 'reports-order_summary_report' => $this->input->post('reports-order_summary_report'),
+                'reports-order_report_menu_wise' => $this->input->post('reports-order_report_menu_wise'),
             );
 
             if (POS) {

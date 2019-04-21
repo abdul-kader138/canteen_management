@@ -100,7 +100,7 @@ function row_status($x)
 
                 <?php if ($Owner || $Admin || $GP['calendar-index']) { ?>
                     <div class="col-lg-2 col-md-2 col-xs-6">
-                        <a class="bgrey white quick-button small" href="<?= admin_url('calender') ?>">
+                        <a class="bgrey white quick-button small" href="<?= admin_url('calendar') ?>">
                             <i class="fa fa-calendar"></i>
                             <p><?= lang('Menu_Details') ?></p>
                         </a>

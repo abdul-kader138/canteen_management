@@ -15,7 +15,6 @@ class Auth extends MY_Controller
 
     function index()
     {
-
         if (!$this->loggedIn) {
             admin_redirect('login');
         } else {

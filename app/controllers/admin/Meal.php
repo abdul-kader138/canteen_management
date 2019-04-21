@@ -135,13 +135,16 @@ class Meal extends MY_Controller
         }
         $order_details = $this->meal_model->getOrderByID($id);
         $orderTimestamp = strtotime($order_details->order_date);
+        $current_Date = date("Y-m-d");
         $current_time = date("H:i:s");
-        $fixed_time = strtotime("11:00:00");
+        $fixed_time = strtotime("10:00:00");
         $time = strtotime($current_time);
         $msg = '';
+        if ($current_Date == $order_details->order_date) {
+        if ($time > $fixed_time) $msg = 'Order date is small than today.';
+        }else
         if ($orderTimestamp < $time) $msg = 'Order date is small than today.';
-        if ($orderTimestamp < $fixed_time) $msg = 'Order date is small than today.';
-        if ($msg == '') {
+        if ($msg == '' && $order_details->user_id == $this->session->userdata('user_id')) {
             if ($this->meal_model->deleteOrder($id)) $this->sma->send_json(array('error' => 0, 'msg' => lang("Info_Deleted_Successfully")));
             else  $this->sma->send_json(array('error' => 1, 'msg' => lang("Info_Not_Deleted")));
         } else {
@@ -157,7 +160,7 @@ class Meal extends MY_Controller
         $s_date = $this->sma->fld($this->input->get('date'));
         if (trim($s_date) == date("Y-m-d")) {
             $current_time = date("H:i:s");
-            $fixed_time = strtotime("11:00:00");
+            $fixed_time = strtotime("10:00:00");
             $time = strtotime($current_time);
             if ($fixed_time < $time) $row = false;
         }
@@ -200,11 +203,11 @@ class Meal extends MY_Controller
                 $order_qty = $_POST['menu_quantity'][$r];
                 $info = $this->meal_model->getTodayMenuByID($menu_id);
                 $discount_amounts = 0;
-                if ($current_user->allow_discount == 1 && $current_user->discount < 100) {
-                    $discount_amounts = ((($info->product_price * $current_user->discount) / 100) + $info->discount_amount);
-                } else if ($current_user->allow_discount == 1 && $current_user->discount == 100) {
-                    $discount_amounts = ((($info->product_price * $current_user->discount) / 100));
-                }
+                $percentage = 100;
+                if ($info->product_price > 80) $percentage = 26.67;
+                $discount_amounts = 0;
+                if ($current_user->allow_discount == 1 && $current_user->discount < 100) $discount_amounts = 40;
+                else if ($current_user->allow_discount == 1 && $current_user->discount == 100) $discount_amounts = 80;
                 $product = array(
                     'title' => $info->title,
                     'order_date' => $order_date,
@@ -265,40 +268,49 @@ class Meal extends MY_Controller
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
+
+
         $order_details = $this->meal_model->getOrderByID($id);
         $this->form_validation->set_rules('order_quantity', 'order_quantity', 'required');
+
+
         if ($this->form_validation->run() == true) {
             $orderTimestamp = strtotime($order_details->order_date);
+            $current_Date = date("Y-m-d");
             $current_time = date("H:i:s");
-            $fixed_time = strtotime("11:00:00");
+            $fixed_time = strtotime("10:00:00");
             $time = strtotime($current_time);
-            if ($orderTimestamp < $time) {
-                $this->session->set_flashdata('warning', lang('Order edit time already passed.'));
-                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
-                redirect('meal');
+
+            if ($current_Date == $order_details->order_date) {
+                if ($time > $fixed_time) {
+                    $this->session->set_flashdata('warning', lang('Order edit time already passed.'));
+                    die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                    redirect('meal');
+                }
+            } else {
+                if ($orderTimestamp < $time) {
+                    $this->session->set_flashdata('warning', lang('Order edit time already passed.'));
+                    die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                    redirect('meal');
+                }
             }
-            if ($orderTimestamp < $fixed_time) {
-                $this->session->set_flashdata('warning', lang('Order edit time already passed.'));
-                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
-                redirect('meal');
-            }
+
 
             $menu_id = $this->input->post('menu_name');
             $order_qty = $this->input->post('order_quantity');
             $info = $this->meal_model->getTodayMenuByID($menu_id);
-            $current_user = $this->meal_model->getUserByID($this->session->userdata('user_id'));
+            $current_user = $this->meal_model->getUserByID($order_details->user_id);
             $discount_amounts = 0;
-            if ($current_user->allow_discount == 1 && $current_user->discount > 100) {
-                $discount_amounts = ((($info->product_price * $current_user->discount) / 100) + $info->discount_amount);
-            } else if ($current_user->allow_discount == 1 && $current_user->discount == 100) {
-                $discount_amounts = ((($info->product_price * $current_user->discount) / 100));
-            }
+            if ($current_user->allow_discount == 1 && $current_user->discount < 100) $discount_amounts = 40;
+            else if ($current_user->allow_discount == 1 && $current_user->discount == 100) $discount_amounts = 80;
+
+
             $product = array(
                 'title' => $info->title,
                 'order_date' => $order_details->order_date,
                 'description' => "Own",
                 'menu_calendar_id' => $info->id,
-                'user_id' => $this->session->userdata('user_id'),
+                'user_id' => $order_details->user_id,
                 'updated_by' => $this->session->userdata('user_id'),
                 'updated_date' => date("Y-m-d H:i:s"),
                 'product_id' => $info->product_id,
@@ -337,6 +349,9 @@ class Meal extends MY_Controller
             $this->data['menus'] = $this->meal_model->getMenusByDate($order_details->order_date);
             $this->data['user'] = $this->meal_model->getUserByID($order_details->user_id);
             $this->data['order'] = $order_details;
+            $this->data['d1'] = $orderTimestamp;
+            $this->data['d2'] = $fixed_time;
+            $this->data['d3'] = $time;
             $this->load->view($this->theme . 'meal/edit_food_order', $this->data);
         }
     }
@@ -415,11 +430,10 @@ class Meal extends MY_Controller
 
                     //calculate discount
                     $discount_amounts = 0;
-                    if ($current_user->allow_discount == 1 && $current_user->discount > 100) {
-                        $discount_amounts = ((($info->product_price * $current_user->discount) / 100) + $info->discount_amount);
-                    } else if ($current_user->allow_discount == 1 && $current_user->discount == 100) {
-                        $discount_amounts = ((($info->product_price * $current_user->discount) / 100));
-                    }
+                    if ($current_user->allow_discount == 1 && $current_user->discount < 100) $discount_amounts = 40;
+                    else if ($current_user->allow_discount == 1 && $current_user->discount == 100) $discount_amounts = 80;
+
+
                     $product = array(
                         'title' => $info->title,
                         'order_date' => $this->sma->fsd($this->input->post('orderDate')),

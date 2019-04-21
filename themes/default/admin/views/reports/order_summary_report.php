@@ -184,7 +184,7 @@ if ($this->input->post('end_date')) {
                             <div class="form-group">
                                 <label class="control-label" for="user"><?= lang("Employee_Name"); ?></label>
                                 <?php
-                                $us[""] = lang('select') . ' ' . lang('Customer');
+                                $us[""] = lang('select') . ' ' . lang('Employee');
                                 foreach ($users as $user) {
                                     $us[$user->id] = $user->first_name . " " . $user->last_name."(".$user->username.")";
                                 }

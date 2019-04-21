@@ -112,7 +112,7 @@
                             <?php
                             if (!empty($sales)) {
                                 foreach ($sales as $value) {
-                                    $array[$value->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tbody><tr><td>" . $this->lang->line("Total") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->product_price) . "</td></tr><tr><td>" . $this->lang->line("Discount") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->discount_amount) . "</td></tr><tr><td>" . $this->lang->line("Grand_Total") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->total) . "</td></tr></tbody></table>";
+                                    $array[$value->date] = "<table class='table table-bordered table-hover table-striped table-condensed data' style='margin:0;'><tbody><tr><td>" . $this->lang->line("Total_Qty") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->qty) . "</td></tr><tr><td>" . $this->lang->line("Total_Price") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->product_price) . "</td></tr><tr><td>" . $this->lang->line("Discount") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->discount_amount) . "</td></tr><tr><td>" . $this->lang->line("Total_Price(With_Discount)") . "</td></tr><tr><td>" . $this->sma->formatMoney($value->total) . "</td></tr></tbody></table>";
                                 }
                                 for ($i = 1; $i <= 12; $i++) {
                                     echo '<td width="8.3%">';

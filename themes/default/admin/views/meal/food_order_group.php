@@ -117,6 +117,12 @@ if ($this->input->post('menu_id')) {
                     }
                 }
             });
+
+            $( "#sel_menu_ids" ).change(function() {
+                $('#menuId').val($('#sel_menu_id').val());
+            });
+
+
             oTable = $('#SlRData').dataTable({
                 "aaSorting": [[0, "desc"]],
                 "aLengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "<?= lang('all') ?>"]],

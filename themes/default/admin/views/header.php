@@ -233,53 +233,6 @@
                                             </ul>
                                         </li>
 
-                                        <li class="mm_sales <?= strtolower($this->router->fetch_method()) == 'sales' ? 'mm_pos' : '' ?>">
-                                            <a class="dropmenu" href="#">
-                                                <i class="fa fa-heart"></i>
-                                                <span class="text"> <?= lang('sales'); ?>
-                                    </span> <span class="chevron closed"></span>
-                                            </a>
-                                            <ul>
-                                                <li id="sales_index">
-                                                    <a class="submenu" href="<?= admin_url('sales'); ?>">
-                                                        <i class="fa fa-heart"></i>
-                                                        <span class="text"> <?= lang('list_sales'); ?></span>
-                                                    </a>
-                                                </li>
-                                                <?php if (POS) { ?>
-                                                    <li id="pos_sales">
-                                                        <a class="submenu" href="<?= admin_url('pos/sales'); ?>">
-                                                            <i class="fa fa-heart"></i>
-                                                            <span class="text"> <?= lang('pos_sales'); ?></span>
-                                                        </a>
-                                                    </li>
-                                                <?php } ?>
-                                                <li id="sales_add">
-                                                    <a class="submenu" href="<?= admin_url('sales/add'); ?>">
-                                                        <i class="fa fa-plus-circle"></i>
-                                                        <span class="text"> <?= lang('add_sale'); ?></span>
-                                                    </a>
-                                                </li>
-                                                <li id="sales_sale_by_csv">
-                                                    <a class="submenu" href="<?= admin_url('sales/sale_by_csv'); ?>">
-                                                        <i class="fa fa-plus-circle"></i>
-                                                        <span class="text"> <?= lang('add_sale_by_csv'); ?></span>
-                                                    </a>
-                                                </li>
-                                                <li id="sales_deliveries">
-                                                    <a class="submenu" href="<?= admin_url('sales/deliveries'); ?>">
-                                                        <i class="fa fa-truck"></i>
-                                                        <span class="text"> <?= lang('deliveries'); ?></span>
-                                                    </a>
-                                                </li>
-                                                <li id="sales_gift_cards">
-                                                    <a class="submenu" href="<?= admin_url('sales/gift_cards'); ?>">
-                                                        <i class="fa fa-gift"></i>
-                                                        <span class="text"> <?= lang('list_gift_cards'); ?></span>
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>
 
                                         <li class="mm_auth mm_customers mm_suppliers mm_billers">
                                             <a class="dropmenu" href="#">
@@ -303,32 +256,6 @@
                                                         </a>
                                                     </li>
                                                 <?php } ?>
-                                                <li id="customers_index">
-                                                    <a class="submenu" href="<?= admin_url('customers'); ?>">
-                                                        <i class="fa fa-users"></i><span
-                                                                class="text"> <?= lang('list_customers'); ?></span>
-                                                    </a>
-                                                </li>
-                                                <li id="customers_index">
-                                                    <a class="submenu" href="<?= admin_url('customers/add'); ?>"
-                                                       data-toggle="modal" data-target="#myModal">
-                                                        <i class="fa fa-plus-circle"></i><span
-                                                                class="text"> <?= lang('add_customer'); ?></span>
-                                                    </a>
-                                                </li>
-                                                <li id="suppliers_index">
-                                                    <a class="submenu" href="<?= admin_url('suppliers'); ?>">
-                                                        <i class="fa fa-users"></i><span
-                                                                class="text"> <?= lang('list_suppliers'); ?></span>
-                                                    </a>
-                                                </li>
-                                                <li id="suppliers_index">
-                                                    <a class="submenu" href="<?= admin_url('suppliers/add'); ?>"
-                                                       data-toggle="modal" data-target="#myModal">
-                                                        <i class="fa fa-plus-circle"></i><span
-                                                                class="text"> <?= lang('add_supplier'); ?></span>
-                                                    </a>
-                                                </li>
                                             </ul>
                                         </li>
                                         <li class="mm_notifications">
@@ -466,7 +393,7 @@
                                                         <span class="text"> <?= lang('Food_Order'); ?></span>
                                                     </a>
                                                 </li>
-                                                <li id="meal_bulk_food_order">
+                                                <li id="meal_food_order_group">
                                                     <a class="submenu" href="<?= admin_url('meal/food_order_group'); ?>">
                                                         <i class="fa fa-plus"></i>
                                                         <span class="text"> <?= lang('Bulk_Food_Order'); ?></span>
@@ -498,14 +425,21 @@
 
                                                 <li id="reports_order_transaction_report">
                                                     <a href="<?= admin_url('reports/order_transaction_report') ?>">
-                                                        <i class="fa fa-history"></i><span
+                                                        <i class="fa fa-th"></i><span
                                                                 class="text"> <?= lang('Order_Details_Report'); ?></span>
                                                     </a>
                                                 </li>
                                                 <li id="reports_order_summary_report">
                                                     <a href="<?= admin_url('reports/order_summary_report') ?>">
-                                                        <i class="fa fa-history"></i><span
+                                                        <i class="fa fa-th"></i><span
                                                                 class="text"> <?= lang('Order_Summary_Report'); ?></span>
+                                                    </a>
+                                                </li>
+
+                                                <li id="reports_order_report_menu_wise">
+                                                    <a href="<?= admin_url('reports/order_report_menu_wise') ?>">
+                                                        <i class="fa fa-th"></i><span
+                                                                class="text"> <?= lang('Order_Report_Menu_Wise'); ?></span>
                                                     </a>
                                                 </li>
                                                 <li id="reports_products">
@@ -988,7 +922,7 @@
                                                     <?php } ?>
 
                                                     <?php if ($GP['meal-bulk_food_order']) { ?>
-                                                        <li id="meal_bulk_food_order">
+                                                        <li id="meal_food_order_group">
                                                             <a class="submenu"
                                                                href="<?= admin_url('meal/food_order_group'); ?>">
                                                                 <i class="fa fa-plus"></i>
@@ -999,7 +933,7 @@
                                                 </ul>
                                             </li>
                                         <?php } ?>
-                                        <?php if ($GP['reports-quantity_alerts'] || $GP['reports-expiry_alerts'] || $GP['reports-products'] || $GP['reports-monthly_sales'] || $GP['reports-sales'] || $GP['reports-payments'] || $GP['reports-purchases'] || $GP['reports-customers'] || $GP['reports-suppliers'] || $GP['reports-expenses'] || $GP['reports-order_transaction_report']) { ?>
+                                        <?php if ($GP['reports-quantity_alerts'] || $GP['reports-expiry_alerts'] || $GP['reports-products'] || $GP['reports-monthly_sales'] || $GP['reports-sales'] || $GP['reports-payments'] || $GP['reports-purchases'] || $GP['reports-customers'] || $GP['reports-order_summary_report'] || $GP['reports-order_report_menu_wise'] || $GP['reports-order_transaction_report']) { ?>
                                             <li class="mm_reports">
                                                 <a class="dropmenu" href="#">
                                                     <i class="fa fa-bar-chart-o"></i>
@@ -1010,7 +944,7 @@
                                                     <?php if ($GP['reports-order_transaction_report']) { ?>
                                                         <li id="reports_order_transaction_report">
                                                             <a href="<?= admin_url('reports/order_transaction_report') ?>">
-                                                                <i class="fa fa-calendar-o"></i><span
+                                                                <i class="fa fa-th"></i><span
                                                                         class="text"> <?= lang('Order_Details_report'); ?></span>
                                                             </a>
                                                         </li>
@@ -1018,16 +952,16 @@
                                                     <?php if ($GP['reports-order_summary_report']) { ?>
                                                         <li id="reports_order_summary_report">
                                                             <a href="<?= admin_url('reports/order_summary_report') ?>">
-                                                                <i class="fa fa-calendar-o"></i><span
+                                                                <i class="fa fa-th"></i><span
                                                                         class="text"> <?= lang('Order_Summary_report'); ?></span>
                                                             </a>
                                                         </li>
                                                     <?php } ?>
-                                                    <?php if ($GP['reports-quantity_alerts']) { ?>
-                                                        <li id="reports_quantity_alerts">
-                                                            <a href="<?= admin_url('reports/quantity_alerts') ?>">
-                                                                <i class="fa fa-bar-chart-o"></i><span
-                                                                        class="text"> <?= lang('product_quantity_alerts'); ?></span>
+                                                    <?php if ($GP['reports-order_report_menu_wise']) { ?>
+                                                        <li id="reports_order_report_menu_wise">
+                                                            <a href="<?= admin_url('reports/order_report_menu_wise') ?>">
+                                                                <i class="fa fa-th"></i><span
+                                                                        class="text"> <?= lang('Order_Report_Menu_Wise'); ?></span>
                                                             </a>
                                                         </li>
                                                     <?php }

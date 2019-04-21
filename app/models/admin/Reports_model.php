@@ -141,7 +141,7 @@ class Reports_model extends CI_Model
 
     public function getDailySales($year, $month, $warehouse_id = NULL,$user_id=NULL)
     {
-        $myQuery = "SELECT DATE_FORMAT( order_date,  '%e' ) AS date, SUM( COALESCE( (product_price - discount_amount), 0 ) ) AS total, SUM( COALESCE( product_price, 0 ) ) AS product_price, SUM( COALESCE( discount_amount, 0 ) ) AS discount_amount
+        $myQuery = "SELECT DATE_FORMAT( order_date,  '%e' ) AS date,SUM( COALESCE(qty,0)) as quantity,  SUM( COALESCE( (product_price - discount_amount), 0 ) ) AS total, SUM( COALESCE( product_price, 0 ) ) AS product_price, SUM( COALESCE( discount_amount, 0 ) ) AS discount_amount
             FROM " . $this->db->dbprefix('food_order_details') . " WHERE ";
         if ($user_id) {
             $myQuery .= " user_id = {$user_id} AND ";
@@ -160,7 +160,7 @@ class Reports_model extends CI_Model
 
     public function getMonthlySales($year, $warehouse_id = NULL,$user_id=NULL)
     {
-        $myQuery = "SELECT DATE_FORMAT( order_date,  '%c' ) AS date, SUM( COALESCE( (product_price - discount_amount), 0 ) ) AS total, SUM( COALESCE( product_price, 0 ) ) AS product_price, SUM( COALESCE( discount_amount, 0 ) ) AS discount_amount
+        $myQuery = "SELECT DATE_FORMAT( order_date,  '%c' ) AS date,SUM( COALESCE( qty, 0 ) ) AS qty, SUM( COALESCE( (product_price - discount_amount), 0 ) ) AS total, SUM( COALESCE( product_price, 0 ) ) AS product_price, SUM( COALESCE( discount_amount, 0 ) ) AS discount_amount
             FROM " . $this->db->dbprefix('food_order_details') . " WHERE ";
         if ($user_id) {
             $myQuery .= " user_id = {$user_id} AND ";
@@ -672,6 +672,26 @@ class Reports_model extends CI_Model
         $q = $this->db->get('purchases');
         if ($q->num_rows() > 0) {
             return $q->row();
+        }
+        return FALSE;
+    }
+
+    public function getAllOrderDetails($order_date= NULL)
+    {
+        $this->db
+            ->select("food_order_details.order_date, users.username, food_order_details.title,food_order_details.product_name, food_order_details.qty")
+            ->join('users', 'users.id = food_order_details.user_id', 'inner')
+            ->where('order_date >=', $order_date)->where('order_date <=', $order_date)
+            ->group_by('food_order_details.id')->order_by('users.username', 'asc');
+        if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $this->db->where('food_order_details.user_id', $this->session->userdata('user_id'));
+        }
+        $q = $this->db->get('food_order_details');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
         }
         return FALSE;
     }
