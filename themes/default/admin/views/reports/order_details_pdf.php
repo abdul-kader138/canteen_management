@@ -51,6 +51,7 @@
                                     <th><?= lang("no"); ?></th>
                                     <th><?= lang("Date");?></th>
                                     <th><?= lang("ID");?></th>
+                                    <th><?= lang("Name");?></th>
                                     <th><?= lang("Menu");?></th>
                                     <th><?= lang("Details");?></th>
                                     <th><?= lang("Qty"); ?></th>
@@ -58,7 +59,7 @@
                                 </thead>
                                 <tbody>
                                 <?php $r = 1;
-                                $col = 5;
+                                $col = 6;
                                 $total = 0;
                                 $total_dues = 0;
                                 $usage = 0;
@@ -68,6 +69,7 @@
                                         <td style="text-align:center; width:40px; vertical-align:middle;"><?= $r; ?></td>
                                         <td style="vertical-align:middle;"><?= $row->order_date; ?></td>
                                         <td style="vertical-align:middle;"><?= $row->username; ?></td>
+                                        <td style="vertical-align:middle;"><?= ($row->first_name .' '.$row->last_name); ?></td>
                                         <td style="vertical-align:middle;">  <?= $row->title; ?></td>
                                         <td style="vertical-align:middle;">  <?= $row->product_name; ?></td>
                                         <td style="vertical-align:middle;">   <?= $row->qty; ?></td>

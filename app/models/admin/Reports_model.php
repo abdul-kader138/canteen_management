@@ -679,7 +679,7 @@ class Reports_model extends CI_Model
     public function getAllOrderDetails($order_date= NULL)
     {
         $this->db
-            ->select("food_order_details.order_date, users.username, food_order_details.title,food_order_details.product_name, food_order_details.qty")
+            ->select("food_order_details.order_date, users.username,users.first_name,users.last_name, food_order_details.title,food_order_details.product_name, food_order_details.qty")
             ->join('users', 'users.id = food_order_details.user_id', 'inner')
             ->where('order_date >=', $order_date)->where('order_date <=', $order_date)
             ->group_by('food_order_details.id')->order_by('users.username', 'asc');

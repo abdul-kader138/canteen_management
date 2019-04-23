@@ -90,7 +90,7 @@ class Calendar extends MY_Controller
 
         if ($this->form_validation->run() == true) {
             $menu_count = $this->site->getEventByDate($this->sma->fsd($this->input->post('start')));
-            if (sizeof($menu_count) >= 2) {
+            if (sizeof($menu_count) >= 3) {
                 $res = array('error' => 1, 'msg' => lang('Sufficient menu are available for this date'));
                 $this->sma->send_json($res);
             }
