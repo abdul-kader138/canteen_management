@@ -448,6 +448,12 @@
                                             name="edit_price" <?php echo $p->edit_price ? "checked" : ''; ?>>
                                             <label for="edit_price" class="padding05"><?= lang('edit_price_on_sale') ?></label>
                                         </span>
+
+                                        <span style="display:inline-block;">
+                                            <input type="checkbox" value="1" class="checkbox" id="system_settings_backup"
+                                                   name="system_settings_backups" <?php echo $p->system_settings_backups ? "checked" : ''; ?>>
+                                            <label for="system_settings_backups" class="padding05"><?= lang('Database_Backup') ?></label>
+                                        </span>
                                     </td>
                                 </tr>
 

@@ -141,10 +141,13 @@ class Meal extends MY_Controller
         $time = strtotime($current_time);
         $msg = '';
         if ($current_Date == $order_details->order_date) {
-        if ($time > $fixed_time) $msg = 'Order date is small than today.';
-        }else
-        if ($orderTimestamp < $time) $msg = 'Order date is small than today.';
-        if ($msg == '' && $order_details->user_id == $this->session->userdata('user_id')) {
+            if ($time > $fixed_time) $msg = 'Order date is small than today.';
+        } else
+            if ($orderTimestamp < $time) $msg = 'Order date is small than today.';
+
+        if($order_details->user_id != $this->session->userdata('user_id') && !$this->Owner)  $msg = 'You have only permission to delete own data.';
+
+        if ($msg == '') {
             if ($this->meal_model->deleteOrder($id)) $this->sma->send_json(array('error' => 0, 'msg' => lang("Info_Deleted_Successfully")));
             else  $this->sma->send_json(array('error' => 1, 'msg' => lang("Info_Not_Deleted")));
         } else {
@@ -382,7 +385,10 @@ class Meal extends MY_Controller
         $menu_id = $this->input->get('menu_id') ? $this->input->get('menu_id') : NULL;
         if (!$order_date) $order_date = date($this->dateFormats['php_sdate']);
         if ($order_date) $order_date = $this->sma->fld($order_date);
-        $si = "( SELECT ut.id as u_id, upper(ut.username) as us_name, concat(ut.first_name,' ',ut.last_name) as u_name FROM " . $this->db->dbprefix('users') . " as ut WHERE discount_type='Full Free' and id NOT IN (select ui.user_id from " . $this->db->dbprefix('food_order_details') . " as ui ";
+        $si="";
+        if ($this->Owner || $this->Admin) $si = "( SELECT ut.id as u_id, upper(ut.username) as us_name, concat(ut.first_name,' ',ut.last_name) as u_name FROM " . $this->db->dbprefix('users') . " as ut WHERE  id NOT IN (select ui.user_id from " . $this->db->dbprefix('food_order_details') . " as ui ";
+        else $si = "( SELECT ut.id as u_id, upper(ut.username) as us_name, concat(ut.first_name,' ',ut.last_name) as u_name FROM " . $this->db->dbprefix('users') . " as ut WHERE discount_type='Full Free' and id NOT IN (select ui.user_id from " . $this->db->dbprefix('food_order_details') . " as ui ";
+
         if ($order_date) {
             $si .= " WHERE ";
             $si .= " ui.order_date = '{$order_date}' ";
@@ -478,4 +484,64 @@ class Meal extends MY_Controller
         }
     }
 
+
+    public function meal_actions()
+    {
+        $this->form_validation->set_rules('form_action', lang("form_action"), 'required');
+
+        if ($this->form_validation->run() == true) {
+
+            if (!empty($_POST['val'])) {
+                if ($this->input->post('form_action') == 'delete') {
+                    if (!$this->Owner && !$this->Admin) {
+                        $get_permission = $this->permission_details[0];
+                        if ((!$get_permission['meal-delete_food_order'])) {
+                            $this->session->set_flashdata('warning', lang('access_denied'));
+                            die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                            redirect($_SERVER["HTTP_REFERER"]);
+                        }
+                    }
+                    foreach ($_POST['val'] as $id) {
+                        $order_details = $this->meal_model->getOrderByID($id);
+                        $orderTimestamp = strtotime($order_details->order_date);
+                        $current_Date = date("Y-m-d");
+                        $current_time = date("H:i:s");
+                        $fixed_time = strtotime("10:00:00");
+                        $time = strtotime($current_time);
+                        $msg = '';
+
+//                        time check
+                        if ($current_Date == $order_details->order_date) {
+                            if ($time > $fixed_time) $msg = 'Order date is small than today.';
+                        } else
+                            if ($orderTimestamp < $time) $msg = 'Order date is small than today.';
+
+                        if($order_details->user_id != $this->session->userdata('user_id') && !$this->Owner)  $msg = 'You have only permission to delete own data.';
+
+                        //if valid delete then
+                        if ($msg == '') {
+                            if ($this->meal_model->deleteOrder($id)) {
+                                $this->session->set_flashdata('message', lang('Info_Deleted_Successfully'));
+                                admin_redirect('meal');
+                            } else {
+                                $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+                                admin_redirect('meal');
+                            }
+                        } else {
+                            $this->session->set_flashdata('error', $msg);
+                            admin_redirect('meal');
+                        }
+
+                    }
+                }
+            } else {
+                $this->session->set_flashdata('error', lang("No_Order_Selected"));
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        } else {
+            $this->session->set_flashdata('error', validation_errors());
+            redirect($_SERVER["HTTP_REFERER"]);
+        }
+    }
 }
+

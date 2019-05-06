@@ -394,7 +394,8 @@
                                                     </a>
                                                 </li>
                                                 <li id="meal_food_order_group">
-                                                    <a class="submenu" href="<?= admin_url('meal/food_order_group'); ?>">
+                                                    <a class="submenu"
+                                                       href="<?= admin_url('meal/food_order_group'); ?>">
                                                         <i class="fa fa-plus"></i>
                                                         <span class="text"> <?= lang('Bulk_Food_Order'); ?></span>
                                                     </a>
@@ -931,6 +932,13 @@
                                                         </li>
                                                     <?php } ?>
                                                 </ul>
+                                            </li>
+                                        <?php } ?>
+                                        <?php if ($GP['system_settings_backups']) { ?>
+                                            <li class="mm_system_settings">
+                                                <a href="<?= admin_url('system_settings/backups') ?>" class="btn-block link">
+                                                    <i class="fa fa-database"></i> <?= lang('backups') ?>
+                                                </a>
                                             </li>
                                         <?php } ?>
                                         <?php if ($GP['reports-quantity_alerts'] || $GP['reports-expiry_alerts'] || $GP['reports-products'] || $GP['reports-monthly_sales'] || $GP['reports-sales'] || $GP['reports-payments'] || $GP['reports-purchases'] || $GP['reports-customers'] || $GP['reports-order_summary_report'] || $GP['reports-order_report_menu_wise'] || $GP['reports-order_transaction_report']) { ?>

@@ -30,6 +30,12 @@
             return '<div class="text-center"><span class="payment_status label label-default">' + x + '</span></div>';
         }
     }
+
+    $('body').on('click', '#delete', function(e) {
+        e.preventDefault();
+        $('#form_action').val($(this).attr('data-action'));
+        $('#action-form').submit();
+    });
     $(document).ready(function () {
         oTable = $('#SupData').dataTable({
             "aaSorting": [[1, "desc"]],
@@ -73,7 +79,7 @@
 
 
 </script>
-<?php if ($Owner || $GP['bulk_actions']) {
+<?php if ($Owner || $GP['meal-delete_food_order']) {
     echo admin_form_open('meal/meal_actions', 'id="action-form"');
 } ?>
 <div class="box">
@@ -85,10 +91,13 @@
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#"><i class="icon fa fa-tasks tip" data-placement="left" title="<?= lang("actions") ?>"></i></a>
                     <ul class="dropdown-menu pull-right tasks-menus" role="menu" aria-labelledby="dLabel">
-                        <li><a href="<?= admin_url('billers/add'); ?>" data-toggle="modal" data-target="#myModal" id="add"><i class="fa fa-plus-circle"></i> <?= lang("add_biller"); ?></a></li>
-                        <li><a href="#" id="excel" data-action="export_excel"><i class="fa fa-file-excel-o"></i> <?= lang('export_to_excel') ?></a></li>
+                        <li>
+                            <a href="<?=admin_url('meal/food_order')?>">
+                                <i class="fa fa-plus-circle"></i> <?=lang('Food_Order')?>
+                            </a>
+                        </li>
                         <li class="divider"></li>
-                        <li><a href="#" class="bpo" title="<b><?= $this->lang->line("delete_billers") ?></b>" data-content="<p><?= lang('r_u_sure') ?></p><button type='button' class='btn btn-danger' id='delete' data-action='delete'><?= lang('i_m_sure') ?></a> <button class='btn bpo-close'><?= lang('no') ?></button>" data-html="true" data-placement="left"><i class="fa fa-trash-o"></i> <?= lang('delete_billers') ?></a></li>
+                        <li><a href="#" class="bpo" title="<b><?= $this->lang->line("Delete_Food_Order") ?></b>" data-content="<p><?= lang('r_u_sure') ?></p><button type='button' class='btn btn-danger' id='delete' data-action='delete'><?= lang('i_m_sure') ?></a> <button class='btn bpo-close'><?= lang('no') ?></button>" data-html="true" data-placement="left"><i class="fa fa-trash-o"></i> <?= lang('Delete_Food_Order') ?></a></li>
                     </ul>
                 </li>
             </ul>
@@ -150,16 +159,13 @@
         </div>
     </div>
 </div>
-<?php if ($Owner || $GP['bulk_actions']) { ?>
+<?php if ($Owner || $GP['meal-delete_food_order']) { ?>
     <div style="display: none;">
         <input type="hidden" name="form_action" value="" id="form_action"/>
         <?= form_submit('performAction', 'performAction', 'id="action-form-submit"') ?>
     </div>
     <?= form_close() ?>
 <?php } ?>
-<?php if ($action && $action == 'add') {
-    echo '<script>$(document).ready(function(){$("#add").trigger("click");});</script>';
-}
 ?>
 
 
