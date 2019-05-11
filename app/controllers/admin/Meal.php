@@ -140,7 +140,7 @@ class Meal extends MY_Controller
         $fixed_time = strtotime("10:00:00");
         $time = strtotime($current_time);
         $msg = '';
-        if ($current_Date == $order_details->order_date) {
+        if ($current_Date == $order_details->order_date ) {
             if ($time > $fixed_time) $msg = 'Order date is small than today.';
         } else
             if ($orderTimestamp < $time) $msg = 'Order date is small than today.';
@@ -165,7 +165,7 @@ class Meal extends MY_Controller
             $current_time = date("H:i:s");
             $fixed_time = strtotime("10:00:00");
             $time = strtotime($current_time);
-            if ($fixed_time < $time) $row = false;
+            if ($fixed_time < $time && !$this->Owner) $row = false;
         }
         if ($row) $row = $this->meal_model->getMenusByDate($s_date);
         $this->sma->send_json($row);
