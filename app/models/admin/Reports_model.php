@@ -695,4 +695,27 @@ class Reports_model extends CI_Model
         }
         return FALSE;
     }
+
+    public function getAllMonthlyOrderDetails($start_date= NULL,$end_date= NULL)
+    {
+        $this->db
+            ->select_sum("food_order_details.product_price")
+            ->select_sum("food_order_details.qty")
+            ->select_sum("food_order_details.discount_amount")
+            ->select("users.username,food_order_details.user_id,users.id,users.first_name,users.last_name")
+            ->join('users', 'users.id = food_order_details.user_id', 'inner')
+            ->where('food_order_details.order_date >=', $start_date)->where('food_order_details.order_date <=', $end_date)
+            ->group_by('users.id')->order_by('users.username', 'asc');
+        if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
+            $this->db->where('food_order_details.user_id', $this->session->userdata('user_id'));
+        }
+        $q = $this->db->get('food_order_details');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return FALSE;
+    }
 }

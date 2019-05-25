@@ -98,90 +98,80 @@ if ($this->input->post('end_date')) {
                         <i class="icon fa fa-download"></i>
                     </a>
                 </li>
+                <li class="dropdown">
+                    <a href="#" id="xls" class="tip" title="<?= lang('Monthly_Food_Bills') ?>">
+                        <i class="icon fa fa-file-excel-o"></i>
+                    </a>
+                </li>
             </ul>
+        </div>
     </div>
-</div>
-<div class="box-content">
-    <div class="row">
-        <div class="col-lg-12">
-            <div id="form">
-                <?php echo admin_form_open("reports/order_report_menu_wise"); ?>
-                <div class="row">
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <?= lang("start_date", "start_date"); ?>
-                            <?php echo form_input('start_date', (isset($_POST['start_date']) ? $_POST['start_date'] : ""), 'class="form-control date" id="start_date"'); ?>
+    <div class="box-content">
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="form">
+                    <?php echo admin_form_open("reports/order_report_menu_wise"); ?>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <?= lang("start_date", "start_date"); ?>
+                                <?php echo form_input('start_date', (isset($_POST['start_date']) ? $_POST['start_date'] : ""), 'class="form-control date" id="start_date"'); ?>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <?= lang("end_date", "end_date"); ?>
+                                <?php echo form_input('end_date', (isset($_POST['end_date']) ? $_POST['end_date'] : ""), 'class="form-control date" id="end_date"'); ?>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-sm-6">
-                        <div class="form-group">
-                            <?= lang("end_date", "end_date"); ?>
-                            <?php echo form_input('end_date', (isset($_POST['end_date']) ? $_POST['end_date'] : ""), 'class="form-control date" id="end_date"'); ?>
-                        </div>
+                    <div class="form-group">
+                        <div
+                                class="controls"> <?php echo form_submit('submit_report', $this->lang->line("submit"), 'class="btn btn-primary"'); ?> </div>
                     </div>
+                    <?php echo form_close(); ?>
+
                 </div>
-                <div class="form-group">
-                    <div
-                            class="controls"> <?php echo form_submit('submit_report', $this->lang->line("submit"), 'class="btn btn-primary"'); ?> </div>
+                <div class="clearfix"></div>
+
+
+                <div class="table-responsive">
+                    <table id="PayRData"
+                           class="table table-bordered table-hover table-striped table-condensed reports-table">
+
+                        <thead>
+                        <tr>
+                            <th><?= lang("Order_Date"); ?></th>
+                            <th><?= lang("Title"); ?></th>
+                            <th><?= lang("Details"); ?></th>
+                            <th><?= lang("Quantity"); ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td colspan="9" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
+                        </tr>
+                        </tbody>
+                        <tfoot class="dtFilter">
+                        <tr class="active">
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                        </tfoot>
+                    </table>
                 </div>
-                <?php echo form_close(); ?>
 
             </div>
-            <div class="clearfix"></div>
-
-
-            <div class="table-responsive">
-                <table id="PayRData"
-                       class="table table-bordered table-hover table-striped table-condensed reports-table">
-
-                    <thead>
-                    <tr>
-                        <th><?= lang("Order_Date"); ?></th>
-                        <th><?= lang("Title"); ?></th>
-                        <th><?= lang("Details"); ?></th>
-                        <th><?= lang("Quantity"); ?></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td colspan="9" class="dataTables_empty"><?= lang('loading_data_from_server') ?></td>
-                    </tr>
-                    </tbody>
-                    <tfoot class="dtFilter">
-                    <tr class="active">
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                    </tfoot>
-                </table>
-            </div>
-
         </div>
     </div>
 </div>
-</div>
-<script type="text/javascript" src="<?= $assets ?>js/html2canvas.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $('#pdf').click(function (event) {
-            event.preventDefault();
-            window.location.href = "<?=admin_url('reports/order_pdf/?v=1' . $o)?>";
-            return false;
-        });
         $('#xls').click(function (event) {
             event.preventDefault();
-            window.location.href = "<?=admin_url('reports/getOrderMenuWiseReport/0/xls/?v=1' . $v)?>";
-            return false;
-        });
-        $('#image').click(function (event) {
-            event.preventDefault();
-            html2canvas($('.box'), {
-                onrendered: function (canvas) {
-                    openImg(canvas.toDataURL());
-                }
-            });
+            window.location.href = "<?=admin_url('reports/getMonthWiseOrder/0/xls/?v=1' . $v)?>";
             return false;
         });
     });

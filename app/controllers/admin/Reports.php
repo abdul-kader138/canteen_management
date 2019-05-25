@@ -938,7 +938,7 @@ class Reports extends MY_Controller
 
         $this->load->library('calendar', $config);
 //        $sales = $user_id ? $this->reports_model->getStaffDailySales($user_id, $year, $month, $warehouse_id) : $this->reports_model->getDailySales($year, $month, $warehouse_id,$user_id);
-        $sales = $this->reports_model->getDailySales($year, $month, $warehouse_id,$user_id);
+        $sales = $this->reports_model->getDailySales($year, $month, $warehouse_id, $user_id);
 
         if (!empty($sales)) {
             foreach ($sales as $sale) {
@@ -976,7 +976,7 @@ class Reports extends MY_Controller
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['year'] = $year;
 //        $this->data['sales'] = $user_id ? $this->reports_model->getStaffMonthlySales($user_id, $year, $warehouse_id) : $this->reports_model->getMonthlySales($year, $warehouse_id,$user_ids);
-        $this->data['sales'] =$this->reports_model->getMonthlySales($year, $warehouse_id,$user_id);
+        $this->data['sales'] = $this->reports_model->getMonthlySales($year, $warehouse_id, $user_id);
         if ($pdf) {
             $html = $this->load->view($this->theme . 'reports/monthly', $this->data, true);
             $name = lang("monthly_sales") . "_" . $year . ".pdf";
@@ -3520,20 +3520,20 @@ class Reports extends MY_Controller
         if (!$this->Owner && !$this->Admin && !$this->session->userdata('view_right')) {
             $user = $this->session->userdata('user_id');
         }
-            $this->load->library('datatables');
-            $this->datatables
-                ->select("order_date, title, product_name,sum(qty)")
-                ->from('food_order_details')
-                ->group_by('food_order_details.order_date,food_order_details.product_name');
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("order_date, title, product_name,sum(qty)")
+            ->from('food_order_details')
+            ->group_by('food_order_details.order_date,food_order_details.product_name');
 
-            if ($start_date) {
-                $this->datatables->where('order_date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
-            }
+        if ($start_date) {
+            $this->datatables->where('order_date BETWEEN "' . $start_date . '" and "' . $end_date . '"');
+        }
 
         if ($user) {
-            $this->datatables->where('user_id',$user);
+            $this->datatables->where('user_id', $user);
         }
-            echo $this->datatables->generate();
+        echo $this->datatables->generate();
 
     }
 
@@ -3553,7 +3553,7 @@ class Reports extends MY_Controller
             $order_date = $this->input->get('order_date');
         }
 
-        if($order_date) $date= date('Y-m-d', $order_date);
+        if ($order_date) $date = date('Y-m-d', $order_date);
 
         $footer = ' <table width="100%">
         <tr>
@@ -3609,6 +3609,87 @@ class Reports extends MY_Controller
         } else {
             $this->sma->generate_customized_pdf($html, $name, null, $footer);
         }
+    }
+
+
+    function getMonthWiseOrder($xls = NULL)
+    {
+        if ($this->input->get('start_date')) {
+            $order_date_start = $this->input->get('start_date');
+        }
+        if ($this->input->get('end_date')) {
+            $order_date_end = $this->input->get('end_date');
+        }
+
+        if ($order_date_start)
+        {
+            $start_date = str_replace('/', '-', $order_date_start);
+            $start_date= date('Y-m-d', strtotime($start_date));
+
+        }
+
+        if ($order_date_end)
+        {
+            $end_date = str_replace('/', '-', $order_date_end);
+            $end_date= date('Y-m-d', strtotime($end_date));
+
+        }
+
+        if (!$this->Owner && !$this->Admin) {
+            $get_permission = $this->permission_details[0];
+            if ((!$get_permission['reports-order_report_menu_wise'])) {
+                $this->session->set_flashdata('warning', lang('access_denied'));
+                die("<script type='text/javascript'>setTimeout(function(){ window.top.location.href = '" . (isset($_SERVER["HTTP_REFERER"]) ? $_SERVER["HTTP_REFERER"] : site_url('welcome')) . "'; }, 10);</script>");
+                redirect($_SERVER["HTTP_REFERER"]);
+            }
+        }
+
+        $data = $this->reports_model->getAllMonthlyOrderDetails($start_date, $end_date);
+        if (!empty($data)) {
+            $this->load->library('excel');
+            $this->excel->setActiveSheetIndex(0);
+            $this->excel->getActiveSheet()->setTitle(lang('Food_Order_Report'));
+            $this->excel->getActiveSheet()->SetCellValue('A1', lang('ID'));
+            $this->excel->getActiveSheet()->SetCellValue('B1', lang('Name'));
+            $this->excel->getActiveSheet()->SetCellValue('C1', lang('Quantity'));
+            $this->excel->getActiveSheet()->SetCellValue('D1', lang('Amount'));
+
+            $row = 2;
+            $total = 0;
+            $total_qty = 0;
+            foreach ($data as $data_row) {
+                if (($data_row->product_price - $data_row->discount_amount) > 0) {
+                    $this->excel->getActiveSheet()->SetCellValue('A' . $row, $data_row->username);
+                    $this->excel->getActiveSheet()->SetCellValue('B' . $row, ($data_row->first_name . " " . $data_row->last_name));
+                    $this->excel->getActiveSheet()->SetCellValue('C' . $row, $data_row->qty);
+                    $this->excel->getActiveSheet()->SetCellValue('D' . $row, ($data_row->product_price - $data_row->discount_amount));
+                    $total += ($data_row->product_price - $data_row->discount_amount);
+                    $total_qty += ($data_row->qty);
+                    $row++;
+                }
+            }
+            $this->excel->getActiveSheet()->getStyle("A" . $row . ":D" . $row)->getBorders()
+                ->getTop()->setBorderStyle(PHPExcel_Style_Border::BORDER_MEDIUM);
+            $this->excel->getActiveSheet()->SetCellValue('C' . $row, $total_qty);
+            $this->excel->getActiveSheet()->SetCellValue('D' . $row, $total);
+
+            $this->excel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+            $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+            $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+            $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+            $this->excel->getDefaultStyle()->getAlignment()->setVertical(PHPExcel_Style_Alignment::VERTICAL_CENTER);
+            $this->excel->getActiveSheet()->getStyle('E2:E' . $row)->getAlignment()->setWrapText(true);
+            $time = strtotime($start_date);
+            $month = date("F", $time);
+            $year = date("Y", $time);
+            $filename = 'Food_Order_Report_For_(' . $month . "_" . $year . ")";
+            $this->load->helper('excel');
+            create_excel($this->excel, $filename);
+
+        }
+        $this->session->set_flashdata('error', lang('nothing_found'));
+        redirect($_SERVER["HTTP_REFERER"]);
+
     }
 
 
