@@ -115,7 +115,7 @@
                 });
 
                 if (isinValidRow==false) {
-                    if (rowCount <= 7) {
+                    if (rowCount <= 30) {
                         var row_id = 0;
                         if (!localStorage.getItem('row_id')) localStorage.setItem('row_id', 1);
                         else {

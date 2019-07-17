@@ -1081,7 +1081,7 @@ function setMenuList(obj) {
         return true;
     }
     // not more than 7 days
-    CurrentDate.setDate(CurrentDate.getDate() + 7);
+    CurrentDate.setDate(CurrentDate.getDate() + 30);
     if (dates > CurrentDate) {
         $('#' + date_id).val('');
         $('#sel_menu_id_' + id[2]).remove();
@@ -1091,7 +1091,7 @@ function setMenuList(obj) {
             title: 'Warning:',
             color: 'yellow',
             progressBar: true,
-            message: 'Date cannot be more than 7 days from Today'
+            message: 'Date cannot be more than 30 days from Today'
         });
         return true;
     }
